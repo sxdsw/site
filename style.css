@@ -1,0 +1,462 @@
+/* ============================================================
+   GLOBAL RESET
+   ============================================================ */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+html {
+    overflow-x: hidden;
+    max-width: 100%;
+    font-family: 'Encode Sans', 'Times New Roman', Times, serif;
+
+}
+
+html.iframe-page,
+body.iframe-page {
+    overflow: hidden;
+    overscroll-behavior: none;
+}
+
+body.iframe-page {
+    margin-top: 15rem;
+}
+
+body.iframe-page #TitleName {
+    margin-top: 0;
+}
+
+body {
+    max-width: 100%;
+    background-color: rgb(255, 255, 255);
+    margin-top: 3.125rem;
+    font-family: 'Times New Roman', Times, serif;
+    font-weight: 600;
+    cursor: crosshair;
+}
+
+/* ============================================================
+   SHARED STYLES
+   ============================================================ */
+#HeaderName {
+    margin-top: 0.3rem;
+    margin-left: 4.5vw;
+    font-size: 22px;
+}
+
+a.linkPage,
+a.linkPage:visited,
+a.linkPage:hover,
+a.linkPage:active {
+    text-decoration: none;
+    color: inherit;
+}
+
+details {
+    display: block !important;
+    width: 100%;
+}
+
+summary {
+    list-style: none;
+    display: inline;
+    position: relative;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+/* suppress webkit default blue underline/highlight on summary */
+summary::-webkit-details-marker {
+    display: none;
+}
+
+summary:focus {
+    outline: none;
+}
+summary:after {
+    content: "";
+    display: inline-block;
+    position: absolute;
+    right: -1.4rem;
+    top: 50%;
+    transform: translateY(-50%);
+    /* right-pointing triangle */
+    width: 0;
+    height: 0;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-left: 7px solid currentColor;
+    transition: transform 0.15s ease;
+}
+
+details[open] summary:after {
+    transform: translateY(-50%) rotate(90deg);
+}
+
+.imageArt {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.imageArt img {
+    flex: 1 1 200px;
+    max-width: 40%;
+    height: auto;
+    object-fit: cover;
+    border-radius: 0px;
+}
+
+.imageArt img.centered{  
+    margin: 0 auto;
+    max-width: 100%;
+    height: auto;
+    flex: 0 0 ; /* fixed width so it doesn't stretch */
+}
+
+.iFrameContainer {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    max-width: 100%;
+}
+
+.videoFrame {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 100%;
+}
+
+.videoFrame video {
+    width: 100%;
+    height: auto;
+}
+
+#quoteContent {
+    font-size: 16px;
+    text-align: center;
+}
+
+#clickable-link {
+    text-decoration: underline;
+    color: blue;
+    font-weight: 500;
+}
+
+/* ============================================================
+   MOBILE STYLES — default (no media query)
+   ============================================================ */
+
+#TitleName {
+    position: static;
+    margin-top: -1.5rem;
+    margin-left: 5vw;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+#Year {
+    position: static;
+    margin-left: 5vw;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+#Medium {
+    position: static;
+    margin-left: 5vw;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+#statement {
+    position: relative;
+    display: flex;
+    margin-top: 0.5rem;
+    margin-left: 5vw;
+    margin-right: 5vw;
+    font-size: 14px;
+    font-weight: 400;
+    text-align: justify;
+}
+
+/* Page wrapper — gives us the two-col on mobile */
+.page-body {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+}
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    max-width: 100%;
+    padding-left: 0vw;
+}
+.preview-panel {
+    width: 100%;
+    max-width: 100%;
+    margin: 0.25rem 0 0 0;
+    padding-left: 1.5rem;
+}
+
+.sites {
+    display: flex;
+    justify-content: flex-start;
+    width: 100%;
+    max-width: 100%;
+}
+
+/* Nav tabs inside left col */
+.tabs {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    font-size: 15px;
+    margin-top: 1.5rem;
+    margin-left: 1.5rem;
+}
+
+/* expand details inside left col — no left offset */
+.expandDetails {
+    position: static;
+    display: flex;
+    left: 0;
+    font-size: 13px;
+    margin: 0.3rem 0 0 0.5rem;
+    font-weight: 500;
+    max-width: 100%;
+}
+
+/* iframe fills right col */
+#myFrame {
+    position: static;
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: 0px;
+    min-height: 0;
+    border: none;
+    margin: 0;
+    overflow: hidden;
+}
+
+/* video wrappers: fluid 16:9 */
+.vimeo-wrapper,
+.youtube-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    padding-bottom: 56.25%;
+    height: 0;
+}
+
+.vimeo-wrapper iframe,
+.youtube-wrapper iframe,
+.videoFrame iframe {
+    position: absolute;
+    top: 0;
+    left: 1rem;
+    width: 95%;
+    height: 95%;
+}
+
+#quote {
+    position: static;
+    display: flex;
+    justify-content: center;
+    margin: 1.25rem 5vw;
+    font-size: 14px;
+    font-style: italic;
+    font-weight: 200;
+}
+
+#Invocation {
+    position: static;
+    display: flex;
+    margin: 0.5rem 5vw;
+    width: auto;
+    max-width: 90%;
+    font-size: 13px;
+    font-style: italic;
+    font-weight: 200;
+    text-align: center;
+}
+
+@media (max-width: 899px) {
+    .sidebar {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    max-width: 100%;
+    padding-left: 5vw;
+}
+    details {
+        display: inline-block;
+        width: auto;
+    }
+
+    summary {
+        display: inline !important;
+        align-items: center;
+        flex-wrap: nowrap !important;
+        white-space: nowrap;          
+        gap: 0.45rem;               
+        position: relative;
+
+    }
+    .tabs {
+        flex-wrap: nowrap !important;
+        margin-top: 3rem;
+    }
+    summary::after {
+        content: "";
+        display: inline-block;
+        position: static !important;  
+        right: auto !important;
+        top: auto !important;
+        transform:translateY(75%); 
+        margin: 0.5rem;
+        /* Keep triangle shape */
+        width: 0;
+        height: 0;
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        border-left: 7px solid currentColor;
+        transition: transform 0.15s ease;
+    }
+    details[open] summary::after {
+        transform: translateY(75%) rotate(90deg) !important;
+    }
+    .expandDetails,
+    .left-col {
+        overflow: visible !important;
+        flex-wrap: nowrap !important;
+        align-items: flex-start;
+    }
+}
+/* ============================================================
+   DESKTOP — restores original layout at 900px+
+   ============================================================ */
+@media (min-width: 900px) {
+
+    html, body {
+        overflow-x: visible;
+    }
+
+    .page-body {
+        display: block;
+    }
+
+
+    #TitleName {
+        font-size: 20px;
+    }
+
+    #Year {
+        position: absolute;
+        margin-top: -0.3125rem;
+        margin-left: 5vw;
+    }
+
+    #Medium {
+        position: absolute;
+        margin-top: 20px;
+        margin-left: 5vw;
+    }
+
+    #statement {
+    margin-top: 0.5rem;
+    margin-right: 5vw;
+    }
+
+    .tabs {
+        align-items: flex-end;
+        margin-top: 2.5rem;
+        margin-left: 0;
+        width: 14.688rem;
+        font-size: 17px;
+    }
+
+    .expandDetails {
+        position: relative;
+        left: 15rem;
+        margin-right: 21.875rem;
+        margin-top: 0.625rem;
+        margin-left: 0;
+        font-size: 15px;
+    }
+
+    #myFrame {
+        position: absolute;
+        left: 15rem;
+        margin-left: 17.5rem;
+        width: calc(100vw - 40rem);
+        height: 0;
+        min-height: 0;
+        margin-top: -10rem;
+        overflow: hidden;
+    }
+
+    .vimeo-wrapper,
+    .youtube-wrapper {
+        width: 35rem;
+        height: 19.6875rem;
+        padding-bottom: 0;
+        position: static;
+    }
+
+    .vimeo-wrapper iframe,
+    .youtube-wrapper iframe {
+        position: static;
+        width: 100%;
+        height: 100%;
+    }
+
+    #quote {
+        position: relative;
+        margin-top: 1.25rem;
+        margin-left: 5vw;
+    }
+
+    #Invocation {
+        position: relative;
+        margin-top: -1.25rem;
+        margin-left: 5vw;
+        margin-right: 5vw;
+        width: 80%;
+        max-width: 80%;
+    }
+}
+/* Make video embeds smaller only when page is loaded inside #myFrame */
+body.iframe-page .videoFrame {
+    width: min(82vw, 900px);
+    margin: 0 auto;
+}
+
+body.iframe-page .vimeo-wrapper,
+body.iframe-page .youtube-wrapper {
+    width: 100%;
+    max-width: 100%;
+    padding-bottom: 56.25%; /* keep 16:9 */
+    margin: 0 auto 1.25rem;
+}
+
+body.iframe-page .imageArt img.centered{  
+    margin: 0 auto;
+    width: 90vw;
+    max-width: 90vw;
+    height: auto;
+    flex: 0 0 ; /* fixed width so it doesn't stretch */
+}
