@@ -8,7 +8,7 @@
 html {
     overflow-x: hidden;
     max-width: 100%;
-    font-family: 'Encode Sans', 'Times New Roman', Times, serif;
+    font-family:  'Times New Roman', Times, serif;
 
 }
 
@@ -361,7 +361,7 @@ details[open] summary:after {
 
 
     #TitleName {
-        font-size: 20px;
+        font-size: 16px;
     }
 
     #Year {
@@ -372,7 +372,7 @@ details[open] summary:after {
 
     #Medium {
         position: absolute;
-        margin-top: 20px;
+        margin-top: 14px;
         margin-left: 5vw;
     }
 
@@ -405,6 +405,7 @@ details[open] summary:after {
         width: calc(100vw - 40rem);
         height: 0;
         min-height: 0;
+       top: 8rem;
         margin-top: 10rem;
         overflow: hidden;
     }
