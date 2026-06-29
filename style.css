@@ -8,15 +8,14 @@
 html {
     overflow-x: hidden;
     max-width: 100%;
-    font-family:  'Times New Roman', Times, serif;
+    font-family: 'Encode Sans', 'Times New Roman', Times, serif;
 
 }
 
 html.iframe-page,
 body.iframe-page {
-    overflow-y: auto !important; /* Allows you to scroll your project statement content */
-    overflow-x: hidden !important;
-    background-color: transparent !important;
+    overflow: hidden;
+    overscroll-behavior: none;
 }
 
 body.iframe-page {
@@ -204,9 +203,10 @@ details[open] summary:after {
     padding-left: 0vw;
 }
 .preview-panel {
-    flex: 1;
-    margin: 0;
-    padding: 0;
+    width: 100%;
+    max-width: 100%;
+    margin: 0.25rem 0 0 0;
+    padding-left: 1.5rem;
 }
 
 .sites {
@@ -230,10 +230,12 @@ details[open] summary:after {
 /* expand details inside left col — no left offset */
 .expandDetails {
     position: static;
-    margin-top: 0.625rem;
-    margin-left: 3rem;
-    margin-right: 0;
-    font-size: 15px;
+    display: flex;
+    left: 0;
+    font-size: 13px;
+    margin: 0.3rem 0 0 0.5rem;
+    font-weight: 500;
+    max-width: 100%;
 }
 
 /* iframe fills right col */
@@ -241,9 +243,11 @@ details[open] summary:after {
     position: static;
     display: block;
     width: 100%;
-    height: 0;
+    max-width: 100%;
+    height: 0px;
     min-height: 0;
     border: none;
+    margin: 0;
     overflow: hidden;
 }
 
@@ -352,19 +356,12 @@ details[open] summary:after {
     }
 
     .page-body {
-    display: flex;
-    align-items: flex-start;
-    gap: 4rem;
-    width: 100%;
-    padding: 0 4.5vw;
-}
-.left-column {
-    width: 26rem;
-    flex-shrink: 0;
-}
+        display: block;
+    }
+
 
     #TitleName {
-        font-size: 16px;
+        font-size: 20px;
     }
 
     #Year {
@@ -375,7 +372,7 @@ details[open] summary:after {
 
     #Medium {
         position: absolute;
-        margin-top: 14px;
+        margin-top: 20px;
         margin-left: 5vw;
     }
 
@@ -408,8 +405,7 @@ details[open] summary:after {
         width: calc(100vw - 40rem);
         height: 0;
         min-height: 0;
-       top: 8rem;
-        margin-top: 10rem;
+        margin-top: -10rem;
         overflow: hidden;
     }
 
