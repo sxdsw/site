@@ -349,114 +349,94 @@ details[open] summary:after {
 /* ============================================================
    DESKTOP — restores original layout at 900px+
    ============================================================ */
-/* ============================================================
-   DESKTOP — Grid Layout Refactor (900px+)
-   ============================================================ */
 @media (min-width: 900px) {
 
     html, body {
-        overflow-x: visible; /* Allows natural layout progression */
+        overflow-x: visible;
     }
 
-    /* 1. Main Structural Grid Wrapper */
-    .page-container {
-        display: grid;
-        grid-template-columns: 280px 1fr; /* Fixed sidebar width, iframe gets the rest */
-        gap: 3rem;                        /* Comfortable space between nav and content */
-        padding: 0 4.5vw;                 /* Matches the alignment of your main header */
-        align-items: start;
+    .page-body {
+        display: block;
     }
 
-    /* 2. Navigation Sidebar Elements (Left Column) */
-    .navigation-sidebar {
-        display: flex;
-        flex-direction: column;
-    }
 
-    .tabs {
-        align-items: flex-start; /* Aligns summary text cleanly to the left */
-        margin-top: 1.5rem;       /* Consistent vertical spacing */
-        width: 100%;
-        font-size: 17px;          /* Preserves your original desktop font sizing */
-    }
-
-    .expandDetails {
-        position: static;         /* Removes the buggy left/right absolute margins */
-        margin-top: 0.625rem;     /* Preserves original spacing */
-        margin-left: 0.5rem;      /* Clean indent under open summary tabs */
-        margin-right: 0;
-        font-size: 15px;          /* Preserves desktop text readability */
-    }
-
-    /* 3. Preview Panel & Iframe Control (Right Column) */
-    .preview-panel {
-        padding-left: 0;          /* Grid handles spacing via gap now */
-        margin: 0;
-    }
-
-    .sites {
-        width: 100%;
-    }
-
-    #myFrame {
-        position: static;         /* Removes buggy screen-tearing absolute offsets */
-        width: 100%;
-        height: 0;                /* Safely updated by your app.js resize listeners */
-        min-height: 0;            /* Preserves original */
-        margin: 0;
-        overflow: hidden;         /* Preserves original */
-    }
-
-    /* 4. Media & Project Specific Cleanups */
     #TitleName {
-        font-size: 20px;          /* Preserves original */
+        font-size: 20px;
     }
 
     #Year {
-        position: absolute;       /* Preserves original meta placement */
-        margin-top: -0.3125rem;   /* Preserves original */
-        margin-left: 5vw;         /* Preserves original */
+        position: absolute;
+        margin-top: -0.3125rem;
+        margin-left: 5vw;
     }
 
     #Medium {
-        position: absolute;       /* Preserves original meta placement */
-        margin-top: 20px;         /* Preserves original */
-        margin-left: 5vw;         /* Preserves original */
+        position: absolute;
+        margin-top: 20px;
+        margin-left: 5vw;
     }
 
     #statement {
-        margin-top: 0.5rem;       /* Preserves original */
-        margin-right: 5vw;        /* Preserves original */
+    margin-top: 0.5rem;
+    margin-right: 5vw;
+    }
+
+    .tabs {
+        align-items: flex-end;
+        margin-top: 2.5rem;
+        margin-left: 0;
+        width: 14.688rem;
+        font-size: 17px;
+    }
+
+    .expandDetails {
+        position: relative;
+        left: 15rem;
+        margin-right: 21.875rem;
+        margin-top: 0.625rem;
+        margin-left: 0;
+        font-size: 15px;
+    }
+
+    #myFrame {
+        position: absolute;
+        left: 15rem;
+        margin-left: 17.5rem;
+        width: calc(100vw - 40rem);
+        height: 0;
+        min-height: 0;
+        margin-top: -10rem;
+        overflow: hidden;
     }
 
     .vimeo-wrapper,
     .youtube-wrapper {
-        width: 35rem;             /* Preserves original embed sizes */
-        height: 19.6875rem;       /* Preserves original embed sizes */
-        padding-bottom: 0;        /* Preserves original */
-        position: static;         /* Preserves original */
+        width: 35rem;
+        height: 19.6875rem;
+        padding-bottom: 0;
+        position: static;
     }
 
     .vimeo-wrapper iframe,
     .youtube-wrapper iframe {
-        position: static;         /* Preserves original */
-        width: 100%;              /* Preserves original */
-        height: 100%;             /* Preserves original */
+        position: static;
+        width: 100%;
+        height: 100%;
     }
 
     #quote {
-        position: relative;       /* Preserves original */
-        margin-top: 1.25rem;      /* Preserves original */
-        margin-left: 5vw;         /* Preserves original */
+        position: relative;
+        margin-top: 1.25rem;
+        margin-left: 5vw;
     }
 
     #Invocation {
-        position: relative;       /* Preserves original */
-        margin-top: -1.25rem;     /* Preserves original */
-        margin-left: 5vw;         /* Preserves original */
-        margin-right: 5vw;        /* Preserves original */
-        width: 80%;               /* Preserves original */
-        max-width: 80%;           /* Preserves original */
+        position: relative;
+        margin-top: -1.25rem;
+        margin-left: 5vw;
+        margin-right: 5vw;
+        width: 80%;
+        max-width: 80%;
     }
 }
 /* Make video embeds smaller only when page is loaded inside #myFrame */
