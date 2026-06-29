@@ -14,8 +14,9 @@ html {
 
 html.iframe-page,
 body.iframe-page {
-    overflow: hidden;
-    overscroll-behavior: none;
+    overflow-y: auto !important; /* Allows you to scroll your project statement content */
+    overflow-x: hidden !important;
+    background-color: transparent !important;
 }
 
 body.iframe-page {
