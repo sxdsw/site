@@ -349,126 +349,133 @@ details[open] summary:after {
 /* ============================================================
    DESKTOP — restores original layout at 900px+
    ============================================================ */
+/* ============================================================
+   DESKTOP — 100% CSS-Only Layout Correction (900px+)
+   ============================================================ */
 @media (min-width: 900px) {
 
     html, body {
-        overflow-x: visible; /* Prevents layout clipping */
+        overflow-x: visible; /* Prevents text elements clipping on the right edge */
     }
 
-    /* 1. Turn the <body> itself into a multi-column row */
+    /* Force the body container to act as a two-column row layout grid */
     body {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;        /* Allows the HeaderName to take up full top width */
-        align-items: flex-start;
-        padding-left: 4.5vw;
-        padding-right: 4.5vw;
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: wrap !important;     /* Lets the header sit completely on top */
+        align-items: flex-start !important;
+        padding-left: 4.5vw !important;
+        padding-right: 4.5vw !important;
     }
 
-    /* Force your main name header to span across the top layout row */
+    /* Ensure your title banner always stretches fully across the screen width */
     #HeaderName {
-        width: 100%;
-        margin-left: 0;
-        margin-bottom: 2rem;
+        width: 100% !important;
+        margin-left: 0 !important;
+        margin-bottom: 2rem !important;
     }
 
-    /* 2. Format details elements to stack neatly down the left side */
+    /* Force details sections to cleanly stack vertically on the left side */
     details {
         display: block !important;
-        width: 280px;            /* Fixes the sidebar width */
-        clear: left;             /* Forces details tags onto their own new lines */
-        float: left;
+        width: 280px !important;       /* Fixes structural sidebar width */
+        clear: left !important;         /* Prevents other links from shifting up horizontally */
+        float: left !important;
+        margin-bottom: 1rem !important;
     }
 
     .tabs {
-        align-items: flex-start; /* Resets from flex-end to keep text clean */
-        margin-top: 1rem;
-        margin-left: 0;
-        width: auto;             /* Resets hardcoded width */
-        font-size: 17px;         /* Retains original font size */
+        display: flex !important;
+        align-items: flex-start !important; /* Aligns dropdown arrow cleanly */
+        margin-top: 0.5rem !important;
+        margin-left: 0 !important;
+        width: auto !important;
+        font-size: 17px !important;     /* Preserves original text scaling */
     }
 
     .expandDetails {
-        position: static;        /* CRITICAL: Removes buggy offsets hiding text */
-        margin-top: 0.625rem;    /* Retains original */
-        margin-left: 0.75rem;    /* Indents links slightly under summary arrow */
-        margin-right: 0;         /* Clears original massive right margin */
-        font-size: 15px;         /* Retains original font size */
-        width: 260px;            /* Ensures text wraps nicely within sidebar bounds */
+        position: static !important;    /* CRITICAL: Strips harmful absolute offset limits */
+        margin-top: 0.625rem !important; /* Preserves original styling */
+        margin-left: 0.75rem !important;/* Indents details links beautifully beneath their summary tab */
+        margin-right: 0 !important;
+        font-size: 15px !important;     /* Preserves readability settings */
+        width: 250px !important;        /* Prevents long text snippets from breaking out */
     }
 
-    /* 3. Shift the preview panel/iframe dynamically to the right column */
+    /* Automatically pushes the preview-panel iframe column to the right side */
     .preview-panel {
-        flex: 1;                 /* Automatically takes up remaining screen width */
-        margin-top: 1rem;        /* Perfectly aligns the iframe to top tab option */
-        padding-left: 3rem;      /* Gutter spacing between sidebar and content */
-        width: auto;
-        max-width: none;
+        flex: 1 !important;             /* Spreads out to take up remaining screen width dynamically */
+        margin-top: 0.5rem !important;  /* Aligns the iframe to the exact level of your topmost menu */
+        padding-left: 3rem !important;  /* Safe content separation spacing */
+        width: auto !important;
+        max-width: none !important;
     }
 
     .sites {
-        width: 100%;
+        width: 100% !important;
     }
 
     #myFrame {
-        position: static;        /* CRITICAL: Pulls frame out of absolute layout stack */
-        width: 100%;             /* Fills up right-side panel fully */
-        height: 0;               /* Handled correctly by app.js */
-        min-height: 0;           /* Retains original */
-        margin: 0;               /* Removes negative structural margins */
-        overflow: hidden;        /* Retains original */
+        position: static !important;    /* CRITICAL: Safeguards frame against breaking viewport visibility */
+        width: 100% !important;
+        height: 0 !important;           /* Smoothly adjusted dynamically via app.js calculations */
+        min-height: 0 !important;       /* Preserves original layout values */
+        margin: 0 !important;
+        overflow: hidden !important;    /* Preserves original layout values */
     }
 
-    /* 4. Retain and sanitize your internal page styling variables */
+    /* ============================================================
+       Internal Frame Template Style Cleanups (Kept Intact)
+       ============================================================ */
     #TitleName {
-        font-size: 20px;         /* Retains original */
+        font-size: 20px; /* Preserves original layout values */
     }
 
     #Year {
-        position: absolute;      /* Retains original meta formatting */
-        margin-top: -0.3125rem;  /* Retains original */
-        margin-left: 5vw;        /* Retains original */
+        position: absolute; /* Preserves original layout values */
+        margin-top: -0.3125rem; /* Preserves original layout values */
+        margin-left: 5vw; /* Preserves original layout values */
     }
 
     #Medium {
-        position: absolute;      /* Retains original meta formatting */
-        margin-top: 20px;        /* Retains original */
-        margin-left: 5vw;        /* Retains original */
+        position: absolute; /* Preserves original layout values */
+        margin-top: 20px; /* Preserves original layout values */
+        margin-left: 5vw; /* Preserves original layout values */
     }
 
     #statement {
-        margin-top: 0.5rem;      /* Retains original */
-        margin-right: 5vw;       /* Retains original */
+        margin-top: 0.5rem; /* Preserves original layout values */
+        margin-right: 5vw; /* Preserves original layout values */
     }
 
     .vimeo-wrapper,
     .youtube-wrapper {
-        width: 35rem;            /* Retains original video box constraints */
-        height: 19.6875rem;      /* Retains original */
-        padding-bottom: 0;       /* Retains original */
-        position: static;        /* Retains original */
+        width: 35rem; /* Preserves original layout values */
+        height: 19.6875rem; /* Preserves original layout values */
+        padding-bottom: 0; /* Preserves original layout values */
+        position: static; /* Preserves original layout values */
     }
 
     .vimeo-wrapper iframe,
     .youtube-wrapper iframe {
-        position: static;        /* Retains original */
-        width: 100%;             /* Retains original */
-        height: 100%;            /* Retains original */
+        position: static; /* Preserves original layout values */
+        width: 100%; /* Preserves original layout values */
+        height: 100%; /* Preserves original layout values */
     }
 
     #quote {
-        position: relative;      /* Retains original */
-        margin-top: 1.25rem;     /* Retains original */
-        margin-left: 5vw;        /* Retains original */
+        position: relative; /* Preserves original layout values */
+        margin-top: 1.25rem; /* Preserves original layout values */
+        margin-left: 5vw; /* Preserves original layout values */
     }
 
     #Invocation {
-        position: relative;      /* Retains original */
-        margin-top: -1.25rem;    /* Retains original */
-        margin-left: 5vw;        /* Retains original */
-        margin-right: 5vw;       /* Retains original */
-        width: 80%;              /* Retains original */
-        max-width: 80%;          /* Retains original */
+        position: relative; /* Preserves original layout values */
+        margin-top: -1.25rem; /* Preserves original layout values */
+        margin-left: 5vw; /* Preserves original layout values */
+        margin-right: 5vw; /* Preserves original layout values */
+        width: 80%; /* Preserves original layout values */
+        max-width: 80%; /* Preserves original layout values */
     }
 }
 /* Make video embeds smaller only when page is loaded inside #myFrame */
