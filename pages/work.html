@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../style.css">
+    <meta name="robots" content="noindex">
+    <title>Work</title>
+    <style>
+        #gate { margin: 4rem auto; max-width: 26rem; text-align: center; }
+        #gate input {
+            font: inherit; padding: 0.5rem 0.75rem; width: 100%;
+            border: 1px solid currentColor; background: transparent; color: inherit;
+        }
+        #gate button {
+            font: inherit; margin-top: 0.75rem; padding: 0.5rem 1.25rem;
+            border: 1px solid currentColor; background: transparent;
+            color: inherit; cursor: crosshair;
+        }
+        #gateNote { min-height: 1.4em; margin-top: 0.75rem; font-size: 0.85em; }
+        #workIndex { margin: 2rem 0; text-align: center; }
+        #workIndex button {
+            font: inherit; margin: 0 0.5rem; padding: 0.35rem 1rem;
+            border: 1px solid currentColor; background: transparent;
+            color: inherit; cursor: crosshair;
+        }
+        #workIndex button[aria-current="true"] { text-decoration: underline; }
+        [hidden] { display: none !important; }
+    </style>
+</head>
+<body>
+    <form id="gate">
+        <p>This section is private.</p>
+        <input id="pass" type="password" autocomplete="current-password"
+               placeholder="passphrase" aria-label="passphrase" required>
+        <button type="submit">Unlock</button>
+        <p id="gateNote" role="status"></p>
+    </form>
+
+    <nav id="workIndex" hidden></nav>
+    <main id="workContent"></main>
+
+    <script>
+        const ITER_FALLBACK = 250000;
+        const note = document.getElementById('gate').querySelector('#gateNote');
+        let key = null;
+        let meta = null;
+        const blobUrls = [];
+
+        const b64ToBytes = (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
+
+        async function deriveKey(passphrase, salt, iterations) {
+            const base = await crypto.subtle.importKey(
+                'raw', new TextEncoder().encode(passphrase), 'PBKDF2', false, ['deriveKey']);
+            return crypto.subtle.deriveKey(
+                { name: 'PBKDF2', salt, iterations, hash: 'SHA-256' },
+                base, { name: 'AES-GCM', length: 256 }, false, ['decrypt']);
+        }
+
+        // Payload layout: [12-byte IV][ciphertext+tag]
+        async function open(bytes) {
+            const iv = bytes.slice(0, 12);
+            return crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, bytes.slice(12));
+        }
+
+        async function fetchSealed(path) {
+            const res = await fetch(path, { cache: 'no-store' });
+            if (!res.ok) throw new Error(`${path}: HTTP ${res.status}`);
+            return new Uint8Array(await res.arrayBuffer());
+        }
+
+        async function decryptImage(img) {
+            const keyPath = img.dataset.encSrc;
+            if (!keyPath || img.dataset.encDone) return;
+            img.dataset.encDone = '1';
+            try {
+                const plain = await open(await fetchSealed(`work/${keyPath}.enc`));
+                const url = URL.createObjectURL(new Blob([plain]));
+                blobUrls.push(url);
+                img.src = url;
+            } catch (err) {
+                img.alt = `could not decrypt ${keyPath}`;
+                console.error(err);
+            }
+        }
+
+        const lazy = new IntersectionObserver((items, obs) => {
+            for (const it of items) {
+                if (!it.isIntersecting) continue;
+                obs.unobserve(it.target);
+                decryptImage(it.target);
+            }
+        }, { rootMargin: '400px' });
+
+        async function showEntry(file, button) {
+            for (const b of document.querySelectorAll('#workIndex button')) {
+                b.setAttribute('aria-current', String(b === button));
+            }
+            for (const url of blobUrls.splice(0)) URL.revokeObjectURL(url);
+
+            const html = new TextDecoder().decode(await open(await fetchSealed(`work/${file}.enc`)));
+            // Parse detached so nothing runs, then move the nodes across.
+            const parsed = new DOMParser().parseFromString(html, 'text/html');
+            for (const img of parsed.querySelectorAll('img[src]')) {
+                img.dataset.encSrc = img.getAttribute('src');
+                img.removeAttribute('src');
+            }
+            const content = document.getElementById('workContent');
+            content.replaceChildren(...parsed.body.childNodes);
+            for (const img of content.querySelectorAll('img[data-enc-src]')) lazy.observe(img);
+        }
+
+        document.getElementById('gate').addEventListener('submit', async (ev) => {
+            ev.preventDefault();
+            const input = document.getElementById('pass');
+            note.textContent = 'Checking…';
+            try {
+                meta ??= await (await fetch('work/meta.json', { cache: 'no-store' })).json();
+                key = await deriveKey(
+                    input.value, b64ToBytes(meta.kdf.salt), meta.kdf.iterations || ITER_FALLBACK);
+                // Verify against a known plaintext before rendering anything.
+                const probe = new TextDecoder().decode(await open(b64ToBytes(meta.check)));
+                if (probe !== 'unlocked') throw new Error('check value mismatch');
+            } catch {
+                key = null;
+                note.textContent = 'Wrong passphrase.';
+                input.select();
+                return;
+            }
+
+            input.value = '';
+            document.getElementById('gate').hidden = true;
+            const nav = document.getElementById('workIndex');
+            nav.replaceChildren(...meta.entries.map((entry) => {
+                const b = document.createElement('button');
+                b.type = 'button';
+                b.textContent = entry.title;
+                b.addEventListener('click', () => showEntry(entry.file, b));
+                return b;
+            }));
+            nav.hidden = false;
+            const first = nav.querySelector('button');
+            if (first) showEntry(meta.entries[0].file, first);
+        });
+
+        addEventListener('pagehide', () => {
+            for (const url of blobUrls.splice(0)) URL.revokeObjectURL(url);
+        });
+    </script>
+    <script src="../app.js"></script>
+</body>
+</html>

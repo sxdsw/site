@@ -4,3 +4,13 @@
 # Large media — hosted externally, too big for GitHub's 100 MB file limit
 documentary_v2.mp4
 *.mp4
+
+# Password-protected work section.
+# These hold the PLAINTEXT and must never be committed — the site serves the
+# encrypted copies in pages/work/ instead. Rebuild with:
+#   node tools/encrypt.mjs
+work-src/
+medianala/
+mediaroleplay1/
+pages/nala.html
+pages/airoleplay.html
