@@ -66,9 +66,6 @@
     --nala-space-5: 2.25rem;
 }
 
-/* ---- Retheme the portable library for this project ----
-   visual_organisation.css ships neutral defaults; NALA points a
-   few of them at its own ramp. This is the whole integration. */
 :root {
     --vo-ink: var(--nala-ink);
     --vo-ink-soft: var(--nala-ink-soft);
@@ -129,11 +126,6 @@
 .nala-type-specimen--regular .nala-type-specimen__glyphs { font-weight: 400; }
 .nala-type-specimen--bold .nala-type-specimen__glyphs { font-weight: 600; }
 
-/* ============================================================
-   4. COLOUR SWATCHES
-   Chip colour comes from the token, so a token edit updates the
-   documentation automatically.
-   ============================================================ */
 
 .nala-swatch-grid {
     display: grid;

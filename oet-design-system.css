@@ -1,0 +1,2336 @@
+/* ==========================================================================
+   OET APPLICATION DESIGN SYSTEM v3
+   CSS implementation of "OET Application Design System v3.pdf"
+   --------------------------------------------------------------------------
+   Every colour, radius, border width and size below was read directly out of
+   the source PDF's vector data, so the numbers here match the spec sheet
+   exactly. Points in the PDF are mapped 1:1 to CSS pixels
+   (a 24pt control becomes a 24px control).
+
+   Light and dark mode are both driven by the tokens in sections 03 and 04.
+   Dark mode activates in two ways:
+     - explicitly:  <html data-theme="dark">
+     - by system:   prefers-color-scheme: dark, unless data-theme="light"
+
+   Sections are self-contained and separated by banner comments so they can be
+   copied out one at a time. Each component section lists the markup it expects.
+
+   --------------------------------------------------------------------------
+   TABLE OF CONTENTS
+     01  FONT STACK
+     02  COLOUR PRIMITIVES          (all raw hex values, single source)
+     03  SEMANTIC TOKENS - LIGHT
+     04  SEMANTIC TOKENS - DARK
+     05  GEOMETRY, TYPE SCALE, ELEVATION
+     06  BASE & RESET
+     07  TYPOGRAPHY
+     08  BUTTONS - SOLID
+     09  BUTTONS - TEXT / LINK
+     10  BUTTONS - PILL TOGGLE
+     11  OPTION SELECTOR (segmented control)
+     12  PROGRESS INDICATOR (stepper)
+     13  FORM - LABELS, INPUT, TEXTAREA
+     14  FORM - SELECT & DROPDOWN MENU
+     15  CHECKBOX
+     16  BULLET POINTS
+     17  CHIPS
+     18  CARDS
+     19  ALERTS
+     20  DIALOG
+     21  POP-UP CARD & SCRIM
+     22  SURFACES & HELPERS
+   ========================================================================== */
+
+
+/* ==========================================================================
+   01  FONT STACK
+   --------------------------------------------------------------------------
+   The PDF is set in PF DIN Text Universal (Regular / Medium / Bold).
+   That is a licensed font and is not bundled here - drop an @font-face block
+   in if you have the files, otherwise the stack degrades to the nearest
+   available DIN-like grotesque and then to the system UI font.
+   ========================================================================== */
+
+/*
+Font Stack
+
+All components inherit `font-family: var(--font-sans)`, a DIN-first grotesque stack
+with graceful fallbacks to system UI fonts. Three weight tokens correspond to the
+Regular, Medium, and Bold typeface cuts.
+
+Token              | Value
+`--font-sans`      | PF DIN Text Universal → DIN Next → Inter → system-ui → Arial
+`--weight-regular` | 400
+`--weight-medium`  | 500
+`--weight-bold`    | 700
+
+To activate the licensed typeface, uncomment the `@font-face` block below and
+point the `src` paths at your font files.
+
+Styleguide 1
+*/
+
+:root {
+  --font-sans:
+    "PF DIN Text Universal", "PF DIN Text Pro", "PF DIN Text", "DIN Next",
+    "DIN Pro", "Inter", "Segoe UI", system-ui, -apple-system,
+    "Helvetica Neue", Arial, sans-serif;
+
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-bold: 700;
+}
+
+/* If you license the family, uncomment and point these at your files.
+
+@font-face {
+  font-family: "PF DIN Text Universal";
+  src: url("fonts/PFDinTextUniversal-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "PF DIN Text Universal";
+  src: url("fonts/PFDinTextUniversal-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-display: swap;
+}
+@font-face {
+  font-family: "PF DIN Text Universal";
+  src: url("fonts/PFDinTextUniversal-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-display: swap;
+}
+*/
+
+
+/* ==========================================================================
+   02  COLOUR PRIMITIVES
+   --------------------------------------------------------------------------
+   Raw palette. These are the only places a hex value appears in this file;
+   everything below is expressed as a semantic token that points here.
+   ========================================================================== */
+
+/*
+Colour Primitives
+
+The single source of truth for all hex values. Every component token in
+sections 3 and 4 references one of these primitives — no raw hex value appears
+anywhere else in this file.
+
+Groups:
+- Brand: `--ntu-blue` (#25265E), `--ntu-red` (#D61E42)
+- Blues: `--blue-700` → `--blue-150` (seven steps)
+- Indigos / Violets: `--indigo-700` → `--plum-500` (dark-mode button ramp)
+- Neutrals: `--ink` (primary text) → `--paper-130` (warm whites)
+- Status success: `--green-500` → `--green-050`
+- Status error: `--red-600` → `--red-050`
+- Status info: `--info-050`, `--info-020`
+- Status tips: `--amber-300`, `--amber-050`, `--brown-600`
+
+Styleguide 2
+*/
+
+:root {
+  /* -- Brand -------------------------------------------------------------- */
+  --ntu-blue: #25265E;   /* NTU BLUE  - light-mode brand swatch         */
+  --ntu-red: #D61E42;    /* NTU RED   - shared by both modes            */
+
+  /* Two near-identical navies appear in the source (#25265E for fills,
+     #262560 / #272560 for borders and label text). Both are kept so the
+     component rules stay literally faithful to the spec sheet.             */
+  --navy-600: #262560;
+  --navy-620: #272560;
+
+  /* -- Blues -------------------------------------------------------------- */
+  --blue-700: #1A3763;
+  --blue-600: #0255A4;
+  --blue-500: #1F55A1;
+  --blue-400: #43779B;
+  --blue-350: #6C94B6;
+  --blue-300: #5EA8DB;
+  --blue-200: #7FB6E1;
+  --blue-150: #94BCE4;
+
+  /* -- Indigos / violets (dark-mode button ramp) -------------------------- */
+  --indigo-700: #3A365B;
+  --indigo-600: #484A9F;
+  --indigo-550: #565071;
+  --indigo-500: #435A91;
+  --indigo-450: #4E5980;
+  --indigo-400: #6070A2;
+  --indigo-350: #3D5AA8;
+  --plum-700: #323148;
+  --plum-600: #433E55;
+  --plum-500: #423F4F;
+
+  /* -- Neutrals ----------------------------------------------------------- */
+  --ink: #231F20;        /* primary text, light mode                    */
+  --slate-900: #292A33;  /* dark-mode page / panel surface              */
+  --slate-700: #3C3E48;  /* dark-mode raised surface                    */
+  --slate-500: #7B7E94;
+  --slate-450: #9091A4;
+  --grey-500: #9EA3AF;   /* muted text & borders, both modes            */
+  --grey-400: #A0A4B1;
+  --grey-350: #B2B6C2;
+  --lavender-400: #BCC8E6;
+  --lavender-300: #DAE0F1; /* the workhorse pale brand tint             */
+  --lavender-250: #D1D3E1;
+  --lavender-200: #D2D4E1;
+  --lavender-150: #EAEAF0;
+  --lavender-100: #EEF0F8;
+  --lavender-050: #E6EDF8;
+  --paper: #FFFFFF;
+  --paper-100: #F6F6FA;
+  --paper-110: #F6F6FB;
+  --paper-120: #F5F4F4;
+  --paper-130: #F3F4F8;
+
+  /* -- Status: success ---------------------------------------------------- */
+  --green-500: #68C07A;
+  --green-400: #70A379;
+  --green-200: #C2E2C4;
+  --green-150: #B7DEC3;
+  --green-050: #F1F8F2;
+
+  /* -- Status: error ------------------------------------------------------ */
+  --red-600: #E41F26;
+  --red-550: #E32128;
+  --red-200: #F9B5B1;
+  --red-050: #FEEEEE;
+
+  /* -- Status: information ------------------------------------------------ */
+  --info-050: #F1F6FC;
+  --info-020: #F3F6FC;
+
+  /* -- Status: tips ------------------------------------------------------- */
+  --amber-300: #FDE589;
+  --amber-050: #FFFBEC;
+  --brown-600: #914220;
+}
+
+
+/* ==========================================================================
+   03  SEMANTIC TOKENS - LIGHT MODE
+   --------------------------------------------------------------------------
+   The default theme. Everything a component needs is named here, so a
+   component rule never reaches for a primitive directly.
+
+   The .theme-light hook pins any subtree to this theme even when the page
+   is dark - that is what lets one page show both modes side by side.
+   ========================================================================== */
+
+/*
+Semantic Tokens - Light Mode
+
+Component-facing design tokens for the default (light) theme. Apply `.theme-light`
+to any subtree to pin it to light mode regardless of the page-level theme, which
+lets both themes appear side by side in a single document.
+
+Token groups: Surfaces, Text, Borders, Buttons (navy/blue/sky/pale/link/pill),
+Option Selector, Progress Indicator, Form, Checkbox, Bullet Points, Chips,
+Cards, Alerts, Dialog, Pop-up Card, Elevation.
+
+Styleguide 3
+*/
+
+:root,
+.theme-light {
+  color-scheme: light;
+
+  /* -- Surfaces ----------------------------------------------------------- */
+  --bg: var(--paper);
+  --surface: var(--paper);
+  --surface-raised: var(--paper);
+  --surface-sunken: var(--paper-130);
+  --surface-brand-tint: var(--lavender-300);
+  --panel-border: var(--lavender-300);
+
+  /* -- Text --------------------------------------------------------------- */
+  --fg: var(--ink);
+  --fg-muted: var(--grey-500);
+  --fg-brand: var(--ntu-blue);
+  --fg-on-brand: var(--paper);
+  --fg-section-label: var(--grey-500);
+
+  /* -- Borders ------------------------------------------------------------ */
+  --border-color: var(--grey-500);
+  --border-brand: var(--ntu-blue);
+
+  /* -- Buttons: navy (primary) -------------------------------------------- */
+  --btn-navy-bg: var(--ntu-blue);
+  --btn-navy-bg-hover: var(--indigo-600);
+  --btn-navy-bg-selected: var(--indigo-700);
+  --btn-navy-fg: var(--paper);
+
+  /* -- Buttons: blue (secondary) ------------------------------------------ */
+  --btn-blue-bg: var(--blue-600);
+  --btn-blue-bg-hover: var(--indigo-500);
+  --btn-blue-bg-selected: var(--blue-700);
+  --btn-blue-fg: var(--paper);
+
+  /* -- Buttons: sky (tertiary) -------------------------------------------- */
+  --btn-sky-bg: var(--blue-300);
+  --btn-sky-bg-hover: var(--blue-350);
+  --btn-sky-bg-selected: var(--blue-400);
+  --btn-sky-fg: var(--paper);
+
+  /* -- Buttons: pale (quaternary) ----------------------------------------- */
+  --btn-pale-bg: var(--lavender-300);
+  --btn-pale-bg-hover: var(--grey-350);
+  --btn-pale-bg-selected: var(--grey-400);
+  --btn-pale-fg: var(--ntu-blue);
+
+  /* -- Buttons: text / link ----------------------------------------------- */
+  --btn-link-fg: var(--grey-500);
+  --btn-link-fg-hover: var(--blue-600);
+  --btn-link-fg-selected: var(--ntu-blue);
+
+  /* -- Buttons: pill toggle ----------------------------------------------- */
+  --pill-bg: var(--paper);
+  --pill-border: var(--grey-500);
+  --pill-fg: var(--grey-500);
+  --pill-bg-hover: var(--lavender-150);
+  --pill-border-hover: var(--navy-600);
+  --pill-fg-hover: var(--navy-620);
+  --pill-bg-selected: var(--lavender-250);
+  --pill-border-selected: var(--navy-600);
+  --pill-fg-selected: var(--navy-620);
+
+  /* -- Option selector ---------------------------------------------------- */
+  --segment-track-bg: var(--paper-130);
+  --segment-track-border: var(--navy-600);
+  --segment-fg: var(--grey-500);
+  --segment-active-bg: var(--paper);
+  --segment-active-border: var(--navy-600);
+  --segment-active-fg: var(--navy-600);
+
+  /* -- Progress indicator ------------------------------------------------- */
+  --step-done-bg: var(--lavender-300);
+  --step-done-border: var(--lavender-400);
+  --step-done-fg: var(--blue-500);
+  --step-done-caption: var(--blue-500);
+
+  --step-active-bg: var(--ntu-blue);
+  --step-active-border: var(--ntu-blue);
+  --step-active-fg: var(--paper);
+  --step-active-caption: var(--ntu-blue);
+
+  --step-todo-bg: var(--paper-120);
+  --step-todo-border: var(--grey-500);
+  --step-todo-fg: var(--grey-500);
+  --step-todo-caption: var(--grey-500);
+
+  /* -- Form --------------------------------------------------------------- */
+  --field-bg: var(--paper);
+  --field-border: var(--grey-500);
+  --field-border-width: var(--border-hair);
+  --field-fg: var(--grey-500);
+  --field-placeholder: var(--grey-500);
+  --field-label: var(--grey-500);
+  --field-help: var(--grey-500);
+
+  --menu-bg: var(--paper);
+  --menu-border: var(--grey-500);
+  --menu-divider: var(--grey-500);
+  --menu-fg: var(--grey-500);
+  --menu-fg-active: var(--ntu-red);
+
+  /* -- Checkbox ----------------------------------------------------------- */
+  --check-bg: transparent;
+  --check-border: var(--ntu-blue);
+  --check-bg-on: var(--ntu-blue);
+  --check-border-on: var(--ntu-blue);
+  --check-bg-danger: var(--ntu-red);
+  --check-border-danger: var(--ntu-blue);
+  --check-mark: var(--paper);
+
+  /* -- Bullet points ------------------------------------------------------ */
+  --bullet-bg: var(--lavender-300);
+  --bullet-border: var(--ntu-blue);
+  --bullet-fg: var(--ink);
+
+  /* -- Chips -------------------------------------------------------------- */
+  --chip-bg: var(--paper);
+  --chip-border: var(--ntu-blue);
+  --chip-fg: var(--ntu-blue);
+  --chip-selected-bg: var(--lavender-250);
+  --chip-selected-border: var(--navy-600);
+  --chip-selected-fg: var(--ntu-blue);
+
+  /* -- Cards -------------------------------------------------------------- */
+  --card-outlined-bg: var(--paper);
+  --card-outlined-border: var(--ntu-blue);
+  --card-filled-bg: var(--lavender-300);
+  --card-elevated-bg: var(--paper);
+  --card-fg: var(--ink);
+
+  /* -- Alerts ------------------------------------------------------------- */
+  --alert-success-bg: var(--green-050);
+  --alert-success-border: var(--green-150);
+  --alert-success-fg: var(--green-500);
+
+  --alert-error-bg: var(--red-050);
+  --alert-error-border: var(--red-600);
+  --alert-error-fg: var(--red-600);
+
+  --alert-info-bg: var(--info-050);
+  --alert-info-border: var(--indigo-350);
+  --alert-info-fg: var(--indigo-350);
+
+  --alert-tips-bg: var(--amber-050);
+  --alert-tips-border: var(--amber-300);
+  --alert-tips-fg: var(--brown-600);
+
+  /* -- Dialog ------------------------------------------------------------- */
+  --dialog-bg: var(--paper);
+  --dialog-fg: var(--ink);
+
+  /* -- Pop-up card -------------------------------------------------------- */
+  --popup-header-bg: var(--ntu-blue);
+  --popup-header-fg: var(--paper);
+  --popup-body-bg: var(--paper);
+  --popup-inner-bg: var(--paper);
+  --popup-inner-border: var(--navy-600);
+  --popup-inner-fg: var(--ntu-blue);
+
+  /* Modal scrim: #292A33 at 25% - the exact alpha used in the source PDF. */
+  --scrim: rgba(41, 42, 51, 0.25);
+
+  /* -- Elevation ---------------------------------------------------------- */
+  /* Measured off the rendered spec sheet: a near-symmetric soft shadow,
+     ~9% alpha at the card edge, fading out over roughly 32px.             */
+  --shadow-elevated: 0 2px 28px rgba(0, 0, 0, 0.16);
+}
+
+
+/* ==========================================================================
+   04  SEMANTIC TOKENS - DARK MODE
+   --------------------------------------------------------------------------
+   The two blocks below are deliberate twins: the first handles an explicit
+   data-theme="dark", the second handles a system dark preference unless the
+   page has opted out with data-theme="light". Keep them in sync when editing.
+   ========================================================================== */
+
+/*
+Semantic Tokens - Dark Mode
+
+Overrides for dark theme. Activated by any of three mechanisms (highest to lowest
+priority):
+
+1. Explicit opt-in:  `<html data-theme="dark">` or the `.theme-dark` class (section 04a).
+2. System preference: `prefers-color-scheme: dark` when no `data-theme` attribute is set
+   (section 04b).
+3. Explicit opt-out:  `data-theme="light"` suppresses the media query entirely.
+
+Sections 04a and 04b are intentional twins — always update both when editing a token.
+
+Alert colours switch from a tinted wash (light) to the spec sheet's "Filled" treatment
+(dark) using the same token names; no extra markup is required.
+
+Styleguide 4
+*/
+
+/* ---- 04a  explicit: <html data-theme="dark">, or .theme-dark ------- */
+:root[data-theme="dark"],
+.theme-dark {
+  color-scheme: dark;
+
+  /* -- Surfaces ----------------------------------------------------------- */
+  --bg: var(--slate-900);
+  --surface: var(--slate-900);
+  --surface-raised: var(--slate-700);
+  --surface-sunken: var(--slate-700);
+  --surface-brand-tint: var(--lavender-300);
+  --panel-border: var(--slate-700);
+
+  /* -- Text --------------------------------------------------------------- */
+  --fg: var(--lavender-300);
+  --fg-muted: var(--grey-500);
+  --fg-brand: var(--lavender-300);
+  --fg-on-brand: var(--paper);
+  --fg-section-label: var(--grey-500);
+
+  /* -- Borders ------------------------------------------------------------ */
+  --border-color: var(--lavender-300);
+  --border-brand: var(--lavender-300);
+
+  /* -- Buttons: navy (primary) -------------------------------------------- */
+  --btn-navy-bg: var(--indigo-700);
+  --btn-navy-bg-hover: var(--indigo-550);
+  --btn-navy-bg-selected: var(--plum-500);
+  --btn-navy-fg: var(--paper);
+
+  /* -- Buttons: blue (secondary) ------------------------------------------ */
+  --btn-blue-bg: var(--indigo-500);
+  --btn-blue-bg-hover: var(--indigo-400);
+  --btn-blue-bg-selected: var(--indigo-450);
+  --btn-blue-fg: var(--paper);
+
+  /* -- Buttons: sky (tertiary) -------------------------------------------- */
+  --btn-sky-bg: var(--blue-300);
+  --btn-sky-bg-hover: var(--blue-200);
+  --btn-sky-bg-selected: var(--blue-350);
+  --btn-sky-fg: var(--paper);
+
+  /* -- Buttons: pale (quaternary) ----------------------------------------- */
+  --btn-pale-bg: var(--lavender-300);
+  --btn-pale-bg-hover: var(--lavender-100);
+  --btn-pale-bg-selected: var(--grey-350);
+  --btn-pale-fg: var(--slate-900);
+
+  /* -- Buttons: text / link ----------------------------------------------- */
+  --btn-link-fg: var(--lavender-300);
+  --btn-link-fg-hover: var(--lavender-300);
+  --btn-link-fg-selected: var(--lavender-300);
+
+  /* -- Buttons: pill toggle ----------------------------------------------- */
+  --pill-bg: var(--slate-700);
+  --pill-border: var(--grey-500);
+  --pill-fg: var(--paper-110);
+  --pill-bg-hover: var(--slate-500);
+  --pill-border-hover: var(--paper-110);
+  --pill-fg-hover: var(--paper-110);
+  --pill-bg-selected: var(--slate-450);
+  --pill-border-selected: var(--paper-110);
+  --pill-fg-selected: var(--paper-110);
+
+  /* -- Option selector ---------------------------------------------------- */
+  --segment-track-bg: var(--slate-700);
+  --segment-track-border: var(--lavender-250);
+  --segment-fg: var(--grey-500);
+  --segment-active-bg: var(--slate-500);
+  --segment-active-border: var(--paper-110);
+  --segment-active-fg: var(--slate-700);
+
+  /* -- Progress indicator ------------------------------------------------- */
+  --step-done-bg: var(--grey-500);
+  --step-done-border: var(--paper-120);
+  --step-done-fg: var(--paper-120);
+  --step-done-caption: var(--grey-500);
+
+  --step-active-bg: var(--blue-600);
+  --step-active-border: var(--lavender-250);
+  --step-active-fg: var(--paper);
+  --step-active-caption: var(--paper-120);
+
+  --step-todo-bg: var(--plum-600);
+  --step-todo-border: var(--lavender-200);
+  --step-todo-fg: var(--lavender-200);
+  --step-todo-caption: var(--lavender-200);
+
+  /* -- Form --------------------------------------------------------------- */
+  --field-bg: var(--slate-700);
+  --field-border: var(--lavender-300);
+  --field-border-width: var(--border);
+  --field-fg: var(--lavender-300);
+  --field-placeholder: var(--lavender-300);
+  --field-label: var(--lavender-300);
+  --field-help: var(--lavender-300);
+
+  --menu-bg: var(--slate-700);
+  --menu-border: var(--lavender-300);
+  --menu-divider: var(--lavender-300);
+  --menu-fg: var(--lavender-300);
+  --menu-fg-active: var(--ntu-red);
+
+  /* -- Checkbox ----------------------------------------------------------- */
+  --check-bg: var(--slate-700);
+  --check-border: var(--grey-500);
+  --check-bg-on: var(--slate-500);
+  --check-border-on: var(--paper-110);
+  --check-bg-danger: var(--ntu-red);
+  --check-border-danger: var(--paper);
+  --check-mark: var(--paper);
+
+  /* -- Bullet points ------------------------------------------------------ */
+  --bullet-bg: var(--grey-500);
+  --bullet-border: var(--lavender-300);
+  --bullet-fg: var(--ink);
+
+  /* -- Chips -------------------------------------------------------------- */
+  --chip-bg: var(--slate-700);
+  --chip-border: var(--grey-500);
+  --chip-fg: var(--lavender-150);
+  --chip-selected-bg: var(--slate-450);
+  --chip-selected-border: var(--paper-110);
+  --chip-selected-fg: var(--paper);
+
+  /* -- Cards -------------------------------------------------------------- */
+  --card-outlined-bg: var(--slate-700);
+  --card-outlined-border: var(--grey-500);
+  --card-filled-bg: var(--slate-700);
+  --card-elevated-bg: var(--slate-700);
+  --card-fg: var(--lavender-300);
+
+  /* -- Alerts (the "Filled" treatment from the spec sheet) ---------------- */
+  --alert-success-bg: var(--green-200);
+  --alert-success-border: var(--green-500);
+  --alert-success-fg: var(--green-400);
+
+  --alert-error-bg: var(--red-200);
+  --alert-error-border: var(--red-550);
+  --alert-error-fg: var(--red-550);
+
+  --alert-info-bg: var(--blue-150);
+  --alert-info-border: var(--info-020);
+  --alert-info-fg: var(--lavender-050);
+
+  --alert-tips-bg: var(--amber-300);
+  --alert-tips-border: var(--amber-050);
+  --alert-tips-fg: var(--brown-600);
+
+  /* -- Dialog ------------------------------------------------------------- */
+  --dialog-bg: var(--lavender-300);
+  --dialog-fg: var(--ink);
+
+  /* -- Pop-up card -------------------------------------------------------- */
+  --popup-header-bg: var(--plum-700);
+  --popup-header-fg: var(--lavender-300);
+  --popup-body-bg: var(--lavender-300);
+  --popup-inner-bg: var(--lavender-300);
+  --popup-inner-border: var(--plum-700);
+  --popup-inner-fg: var(--plum-700);
+
+  --scrim: rgba(41, 42, 51, 0.65);
+
+  /* -- Elevation ---------------------------------------------------------- */
+  --shadow-elevated: 0 2px 28px rgb(0, 0, 0);
+}
+
+/* ---- 04b  by system preference (twin of 04a) ---------------------------- */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+
+    /* -- Surfaces --------------------------------------------------------- */
+    --bg: var(--slate-900);
+    --surface: var(--slate-900);
+    --surface-raised: var(--slate-700);
+    --surface-sunken: var(--slate-700);
+    --surface-brand-tint: var(--lavender-300);
+    --panel-border: var(--slate-700);
+
+    /* -- Text ------------------------------------------------------------- */
+    --fg: var(--lavender-300);
+    --fg-muted: var(--grey-500);
+    --fg-brand: var(--lavender-300);
+    --fg-on-brand: var(--paper);
+    --fg-section-label: var(--grey-500);
+
+    /* -- Borders ---------------------------------------------------------- */
+    --border-color: var(--lavender-300);
+    --border-brand: var(--lavender-300);
+
+    /* -- Buttons: navy (primary) ------------------------------------------ */
+    --btn-navy-bg: var(--indigo-700);
+    --btn-navy-bg-hover: var(--indigo-550);
+    --btn-navy-bg-selected: var(--plum-500);
+    --btn-navy-fg: var(--paper);
+
+    /* -- Buttons: blue (secondary) ---------------------------------------- */
+    --btn-blue-bg: var(--indigo-500);
+    --btn-blue-bg-hover: var(--indigo-400);
+    --btn-blue-bg-selected: var(--indigo-450);
+    --btn-blue-fg: var(--paper);
+
+    /* -- Buttons: sky (tertiary) ------------------------------------------ */
+    --btn-sky-bg: var(--blue-300);
+    --btn-sky-bg-hover: var(--blue-200);
+    --btn-sky-bg-selected: var(--blue-350);
+    --btn-sky-fg: var(--paper);
+
+    /* -- Buttons: pale (quaternary) --------------------------------------- */
+    --btn-pale-bg: var(--lavender-300);
+    --btn-pale-bg-hover: var(--lavender-100);
+    --btn-pale-bg-selected: var(--grey-350);
+    --btn-pale-fg: var(--slate-900);
+
+    /* -- Buttons: text / link --------------------------------------------- */
+    --btn-link-fg: var(--lavender-300);
+    --btn-link-fg-hover: var(--lavender-300);
+    --btn-link-fg-selected: var(--lavender-300);
+
+    /* -- Buttons: pill toggle --------------------------------------------- */
+    --pill-bg: var(--slate-700);
+    --pill-border: var(--grey-500);
+    --pill-fg: var(--paper-110);
+    --pill-bg-hover: var(--slate-500);
+    --pill-border-hover: var(--paper-110);
+    --pill-fg-hover: var(--paper-110);
+    --pill-bg-selected: var(--slate-450);
+    --pill-border-selected: var(--paper-110);
+    --pill-fg-selected: var(--paper-110);
+
+    /* -- Option selector -------------------------------------------------- */
+    --segment-track-bg: var(--slate-700);
+    --segment-track-border: var(--lavender-250);
+    --segment-fg: var(--grey-500);
+    --segment-active-bg: var(--slate-500);
+    --segment-active-border: var(--paper-110);
+    --segment-active-fg: var(--slate-700);
+
+    /* -- Progress indicator ----------------------------------------------- */
+    --step-done-bg: var(--grey-500);
+    --step-done-border: var(--paper-120);
+    --step-done-fg: var(--paper-120);
+    --step-done-caption: var(--grey-500);
+
+    --step-active-bg: var(--blue-600);
+    --step-active-border: var(--lavender-250);
+    --step-active-fg: var(--paper);
+    --step-active-caption: var(--paper-120);
+
+    --step-todo-bg: var(--plum-600);
+    --step-todo-border: var(--lavender-200);
+    --step-todo-fg: var(--lavender-200);
+    --step-todo-caption: var(--lavender-200);
+
+    /* -- Form ------------------------------------------------------------- */
+    --field-bg: var(--slate-700);
+    --field-border: var(--lavender-300);
+    --field-border-width: var(--border);
+    --field-fg: var(--lavender-300);
+    --field-placeholder: var(--lavender-300);
+    --field-label: var(--lavender-300);
+    --field-help: var(--lavender-300);
+
+    --menu-bg: var(--slate-700);
+    --menu-border: var(--lavender-300);
+    --menu-divider: var(--lavender-300);
+    --menu-fg: var(--lavender-300);
+    --menu-fg-active: var(--ntu-red);
+
+    /* -- Checkbox --------------------------------------------------------- */
+    --check-bg: var(--slate-700);
+    --check-border: var(--grey-500);
+    --check-bg-on: var(--slate-500);
+    --check-border-on: var(--paper-110);
+    --check-bg-danger: var(--ntu-red);
+    --check-border-danger: var(--paper);
+    --check-mark: var(--paper);
+
+    /* -- Bullet points ---------------------------------------------------- */
+    --bullet-bg: var(--grey-500);
+    --bullet-border: var(--lavender-300);
+    --bullet-fg: var(--ink);
+
+    /* -- Chips ------------------------------------------------------------ */
+    --chip-bg: var(--slate-700);
+    --chip-border: var(--grey-500);
+    --chip-fg: var(--lavender-150);
+    --chip-selected-bg: var(--slate-450);
+    --chip-selected-border: var(--paper-110);
+    --chip-selected-fg: var(--paper);
+
+    /* -- Cards ------------------------------------------------------------ */
+    --card-outlined-bg: var(--slate-700);
+    --card-outlined-border: var(--grey-500);
+    --card-filled-bg: var(--slate-700);
+    --card-elevated-bg: var(--slate-700);
+    --card-fg: var(--lavender-300);
+
+    /* -- Alerts (the "Filled" treatment from the spec sheet) -------------- */
+    --alert-success-bg: var(--green-200);
+    --alert-success-border: var(--green-500);
+    --alert-success-fg: var(--green-400);
+
+    --alert-error-bg: var(--red-200);
+    --alert-error-border: var(--red-550);
+    --alert-error-fg: var(--red-550);
+
+    --alert-info-bg: var(--blue-150);
+    --alert-info-border: var(--info-020);
+    --alert-info-fg: var(--lavender-050);
+
+    --alert-tips-bg: var(--amber-300);
+    --alert-tips-border: var(--amber-050);
+    --alert-tips-fg: var(--brown-600);
+
+    /* -- Dialog ----------------------------------------------------------- */
+    --dialog-bg: var(--lavender-300);
+    --dialog-fg: var(--ink);
+
+    /* -- Pop-up card ------------------------------------------------------ */
+    --popup-header-bg: var(--plum-700);
+    --popup-header-fg: var(--lavender-300);
+    --popup-body-bg: var(--lavender-300);
+    --popup-inner-bg: var(--lavender-300);
+    --popup-inner-border: var(--plum-700);
+    --popup-inner-fg: var(--plum-700);
+
+    --scrim: rgba(41, 42, 51, 0.65);
+
+    /* -- Elevation -------------------------------------------------------- */
+    --shadow-elevated: 0 2px 28px rgba(0, 0, 0, 0.45);
+  }
+}
+
+
+/* ==========================================================================
+   05  GEOMETRY, TYPE SCALE, ELEVATION
+   --------------------------------------------------------------------------
+   Sizes are the PDF's point values carried straight over to pixels.
+   ========================================================================== */
+
+/*
+Geometry, Type Scale & Elevation
+
+Sizing, spacing, radius, and shadow tokens derived directly from the PDF spec
+(1 pt in the source = 1 px here).
+
+Corner radii:
+  `--radius-xs`   2.5px — pop-up card header only
+  `--radius-sm`   4px   — checkbox
+  `--radius`      5px   — default (buttons, fields, cards, chips)
+  `--radius-pill` 999px — pill toggles, step dots, bullet circles
+
+Border widths (sub-pixel spec values promoted to 1px for 1x display parity):
+  `--border-hair` 1px (spec 0.5pt)
+  `--border-thin` 1px (spec 0.75pt)
+  `--border`      1px (spec 1pt)
+
+Control metrics: `--control-h` 24px · `--control-px` 12px
+Type scale: `--h1` 36px → `--text-xs` 8.75px
+Spacing scale: `--space-1` 4px → `--space-6` 32px
+
+Styleguide 5
+*/
+
+:root {
+  /* -- Corner radii ------------------------------------------------------- */
+  --radius-xs: 2.5px;  /* pop-up card header                            */
+  --radius-sm: 4px;    /* checkbox                                      */
+  --radius: 5px;       /* the default: buttons, fields, cards, chips     */
+  --radius-pill: 999px;
+
+  /* -- Border widths ----------------------------------------------------- */
+  /* The source uses 0.5pt / 0.75pt / 1pt strokes. Sub-pixel widths round
+     away on 1x displays, so the two thin steps are promoted to 1px here.
+     For pixel-exact parity with the PDF, set them to 0.5px / 0.75px.      */
+  --border-hair: 1px;  /* spec 0.5pt                                    */
+  --border-thin: 1px;  /* spec 0.75pt                                   */
+  --border: 1px;
+
+  /* -- Control metrics --------------------------------------------------- */
+  --control-h: 24px;       /* buttons, fields, chips, alerts            */
+  --control-px: 12px;      /* horizontal padding inside a field         */
+  --segment-h: 28px;       /* option-selector track                     */
+  --segment-item-h: 20px;  /* option-selector item                      */
+  --step-size: 28px;       /* progress circle                           */
+  --check-size: 24px;
+  --bullet-size: 24px;
+  --textarea-h: 60px;
+  --icon-size: 8px;        /* dropdown caret, close X                   */
+
+  /* -- Reference widths from the spec sheet ------------------------------ */
+  --btn-w: 180px;
+  --pill-w: 120px;
+  --field-w: 480px;
+  --field-w-sm: 166px;
+  --segment-w: 260px;
+  --card-w: 145px;
+  --card-h: 120px;
+  --dialog-w: 200px;
+  --dialog-h: 120px;
+  --popup-w: 345px;
+  --popup-header-h: 76px;
+  --popup-inner-w: 129px;
+  --popup-inner-h: 98px;
+
+  /* -- Type scale -------------------------------------------------------- */
+  --h1: 36px;
+  --h2: 28px;
+  --h3: 20px;
+  --h4: 18px;
+  --text-lg: 12px;    /* body, control labels, field text              */
+  --text-md: 11.6px;  /* section labels, card titles, dialog action    */
+  --text-sm: 10px;    /* captions, pill labels                         */
+  --text-xs: 8.75px;  /* swatch labels                                 */
+
+  --leading-tight: 1;
+  --leading-snug: 1.2;
+  --leading-normal: 1.35;
+
+  /* -- Spacing ----------------------------------------------------------- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+}
+
+
+/* ==========================================================================
+   06  BASE & RESET
+   ========================================================================== */
+
+/*
+Base & Reset
+
+Scope class for all OET design-system components. Apply `.oet` to the root
+wrapper element of your application or component tree. All design-system
+styles are intentionally scoped inside `.oet` so they cannot leak into host
+pages or third-party markup.
+
+Responsibilities:
+- Forces `box-sizing: border-box` on every descendant.
+- Sets the base `background`, `color`, `font-family`, `font-size`, and
+  `line-height` from design tokens.
+- Strips browser chrome (`appearance: none`) from all interactive controls
+  defined by this system.
+- Adds a visible `:focus-visible` outline for keyboard users on every
+  interactive element inside the scope.
+
+Markup:
+<div class="oet">
+  <!-- All design-system components must live inside this wrapper. -->
+</div>
+
+Styleguide 6
+*/
+
+.oet,
+.oet *,
+.oet *::before,
+.oet *::after {
+  box-sizing: border-box;
+}
+
+.oet {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-normal);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Visible focus for keyboard users on every interactive part. */
+.oet :focus-visible {
+  outline: 2px solid var(--fg-brand);
+  outline-offset: 2px;
+}
+
+/* Strip the platform chrome off the controls this system draws itself.
+   Deliberately scoped to these classes rather than to every button and
+   input, so native controls elsewhere on the page are left alone. */
+.btn,
+.btn-text,
+.pill,
+.segment__item,
+.chip,
+.chip__close,
+.select,
+.input,
+.dialog__action,
+.popup__close {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+
+/* ==========================================================================
+   07  TYPOGRAPHY
+   --------------------------------------------------------------------------
+   The spec sheet shows the scale twice: once in Medium and once in Regular.
+   .h* defaults to Medium; add .h--regular for the lighter cut, or
+   .h--bold for the heaviest.
+
+   HTML:  <h1 class="h1">Heading 1</h1>
+          <h1 class="h1 h--regular">Heading 1</h1>
+   ========================================================================== */
+
+/*
+Typography - Headings
+
+Heading utility classes that map to the PDF type scale. All default to
+`--weight-medium`. Append `.h--regular` or `.h--bold` to change the cut.
+
+.h1 - 36px heading
+.h2 - 28px heading
+.h3 - 20px heading
+.h4 - 18px heading
+
+Markup:
+<h1 class="{{modifier_class}}">Heading Text</h1>
+
+Styleguide 7.1
+*/
+
+/*
+Typography - Weight Modifiers
+
+Override the default Medium weight on any `.h*` element.
+
+.h--regular - Regular (400) weight cut
+.h--bold    - Bold (700) weight cut
+
+Markup:
+<h2 class="h2 {{modifier_class}}">Heading Text</h2>
+
+Styleguide 7.2
+*/
+
+/*
+Typography - Body & Labels
+
+Utility classes for body copy, captions, and section labels.
+
+.body         - 12px Regular body copy
+.caption      - 10px Regular caption text
+.label        - 11.6px Bold section label
+.label--muted - Label in the muted section-label colour
+.text-muted   - Any text rendered in the muted foreground colour
+
+Markup:
+<p class="{{modifier_class}}">Sample text content.</p>
+
+Styleguide 7.3
+*/
+
+.h1,
+.h2,
+.h3,
+.h4 {
+  margin: 0;
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-snug);
+}
+
+.h1 { font-size: var(--h1); }
+.h2 { font-size: var(--h2); }
+.h3 { font-size: var(--h3); }
+.h4 { font-size: var(--h4); }
+
+.h--regular { font-weight: var(--weight-regular); }
+.h--bold    { font-weight: var(--weight-bold); }
+
+/* -- Body copy ----------------------------------------------------------- */
+.body {
+  margin: 0;
+  font-size: var(--text-lg);
+  line-height: var(--leading-normal);
+}
+
+.caption {
+  margin: 0;
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+}
+
+/* Small bold label used for the spec sheet's own section headings. */
+.label {
+  font-size: var(--text-md);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-snug);
+}
+
+.label--muted { color: var(--fg-section-label); }
+.text-muted   { color: var(--fg-muted); }
+
+
+/* ==========================================================================
+   08  BUTTONS - SOLID
+   --------------------------------------------------------------------------
+   Four tones, each with default / hover / selected. Hover is a real :hover;
+   .btn.is-hover forces the same look, which is what the spec sheet's
+   "Hover" column shows. Selected is .is-selected or aria-pressed="true".
+
+   HTML:  <button class="btn btn--navy">Button</button>
+          <button class="btn btn--blue is-hover">Button</button>
+          <button class="btn btn--sky is-selected">Button</button>
+   ========================================================================== */
+
+/*
+Buttons - Solid
+
+Filled action buttons. Combine `.btn` with one tone modifier. The `.is-hover`
+class forces the hover appearance (used by the spec sheet's "Hover" column
+demos). Selected state is driven by `.is-selected` or `aria-pressed="true"`.
+Disabled state via the native `:disabled` attribute or `.is-disabled`.
+
+.btn--navy - Primary: NTU navy fill, white label
+.btn--blue - Secondary: brand blue fill, white label
+.btn--sky  - Tertiary: sky blue fill, white label
+.btn--pale - Quaternary: pale lavender fill, navy label
+
+Markup:
+<button class="btn {{modifier_class}}">Button Label</button>
+
+Styleguide 8.1
+*/
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--btn-w);
+  min-height: var(--control-h);
+  padding: 0 var(--space-3);
+  border: 0;
+  border-radius: var(--radius);
+  font-family: var(--font-sans);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-tight);
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 120ms ease, color 120ms ease;
+}
+
+.btn:disabled,
+.btn.is-disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* -- Tone: navy (primary) ------------------------------------------------- */
+.btn--navy {
+  background: var(--btn-navy-bg);
+  color: var(--btn-navy-fg);
+}
+.btn--navy:hover:not(:disabled):not(.is-selected),
+.btn--navy.is-hover {
+  background: var(--btn-navy-bg-hover);
+}
+.btn--navy.is-selected,
+.btn--navy[aria-pressed="true"] {
+  background: var(--btn-navy-bg-selected);
+}
+
+/* -- Tone: blue (secondary) ---------------------------------------------- */
+.btn--blue {
+  background: var(--btn-blue-bg);
+  color: var(--btn-blue-fg);
+}
+.btn--blue:hover:not(:disabled):not(.is-selected),
+.btn--blue.is-hover {
+  background: var(--btn-blue-bg-hover);
+}
+.btn--blue.is-selected,
+.btn--blue[aria-pressed="true"] {
+  background: var(--btn-blue-bg-selected);
+}
+
+/* -- Tone: sky (tertiary) ------------------------------------------------ */
+.btn--sky {
+  background: var(--btn-sky-bg);
+  color: var(--btn-sky-fg);
+}
+.btn--sky:hover:not(:disabled):not(.is-selected),
+.btn--sky.is-hover {
+  background: var(--btn-sky-bg-hover);
+}
+.btn--sky.is-selected,
+.btn--sky[aria-pressed="true"] {
+  background: var(--btn-sky-bg-selected);
+}
+
+/* -- Tone: pale (quaternary) --------------------------------------------- */
+.btn--pale {
+  background: var(--btn-pale-bg);
+  color: var(--btn-pale-fg);
+}
+.btn--pale:hover:not(:disabled):not(.is-selected),
+.btn--pale.is-hover {
+  background: var(--btn-pale-bg-hover);
+}
+.btn--pale.is-selected,
+.btn--pale[aria-pressed="true"] {
+  background: var(--btn-pale-bg-selected);
+}
+
+
+/* ==========================================================================
+   09  BUTTONS - TEXT / LINK
+   --------------------------------------------------------------------------
+   HTML:  <button class="btn-text">Button</button>
+   ========================================================================== */
+
+/*
+Buttons - Text / Link
+
+An underlined ghost button with no background or border. Styled to read as an
+inline hyperlink while retaining full button semantics and keyboard accessibility.
+Hover and selected states shift only the text colour.
+
+Markup:
+<button class="btn-text">Text Button</button>
+
+Styleguide 8.2
+*/
+
+.btn-text {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--control-h);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--btn-link-fg);
+  font-family: var(--font-sans);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-tight);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  transition: color 120ms ease;
+}
+
+.btn-text:hover:not(.is-selected),
+.btn-text.is-hover {
+  color: var(--btn-link-fg-hover);
+}
+
+.btn-text.is-selected,
+.btn-text[aria-pressed="true"] {
+  color: var(--btn-link-fg-selected);
+}
+
+
+/* ==========================================================================
+   10  BUTTONS - PILL TOGGLE
+   --------------------------------------------------------------------------
+   The rounded outline button from the spec sheet: unselected / hovered /
+   selected. Text is Regular here, not Bold, and one step smaller.
+
+   HTML:  <button class="pill">Button Unselected</button>
+          <button class="pill is-selected">Button Selected</button>
+   ========================================================================== */
+
+/*
+Buttons - Pill Toggle
+
+A fully rounded outline toggle, typically used for tag-style filter selections.
+Text is Regular weight and one step smaller than solid buttons. Toggle state is
+set with `.is-selected` or `aria-pressed="true"`.
+
+.is-selected - Filled lavender background with dark navy border and label
+
+Markup:
+<button class="pill {{modifier_class}}">Option Label</button>
+
+Styleguide 8.3
+*/
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--pill-w);
+  min-height: var(--control-h);
+  padding: 0 var(--space-3);
+  border: var(--border) solid var(--pill-border);
+  border-radius: var(--radius-pill);
+  background: var(--pill-bg);
+  color: var(--pill-fg);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-tight);
+  cursor: pointer;
+  transition: background-color 120ms ease, border-color 120ms ease,
+              color 120ms ease;
+}
+
+.pill:hover:not(.is-selected),
+.pill.is-hover {
+  border-color: var(--pill-border-hover);
+  background: var(--pill-bg-hover);
+  color: var(--pill-fg-hover);
+}
+
+.pill.is-selected,
+.pill[aria-pressed="true"] {
+  border-color: var(--pill-border-selected);
+  background: var(--pill-bg-selected);
+  color: var(--pill-fg-selected);
+}
+
+
+/* ==========================================================================
+   11  OPTION SELECTOR (segmented control)
+   --------------------------------------------------------------------------
+   HTML:  <div class="segment" role="tablist">
+            <button class="segment__item is-active" role="tab">Option 1</button>
+            <button class="segment__item" role="tab">Option 2</button>
+            <button class="segment__item" role="tab">Option 3</button>
+          </div>
+   ========================================================================== */
+
+/*
+Option Selector
+
+A segmented control ("tab strip") for switching between mutually exclusive views
+or modes. Apply `role="tablist"` to `.segment` and `role="tab"` to each
+`.segment__item`. Mark the active item with `.is-active` or `aria-selected="true"`.
+
+Markup:
+<div class="segment" role="tablist">
+  <button class="segment__item is-active" role="tab">Option 1</button>
+  <button class="segment__item" role="tab">Option 2</button>
+  <button class="segment__item" role="tab">Option 3</button>
+</div>
+
+Styleguide 9
+*/
+
+.segment {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  width: var(--segment-w);
+  height: var(--segment-h);
+  padding: 0 var(--space-1);
+  border: var(--border) solid var(--segment-track-border);
+  border-radius: var(--radius);
+  background: var(--segment-track-bg);
+}
+
+.segment__item {
+  flex: 1 1 0;
+  height: var(--segment-item-h);
+  padding: 0 var(--space-1);
+  border: var(--border) solid transparent;
+  border-radius: var(--radius);
+  background: none;
+  color: var(--segment-fg);
+  font-family: var(--font-sans);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-tight);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 120ms ease, border-color 120ms ease,
+              color 120ms ease;
+}
+
+.segment__item.is-active,
+.segment__item[aria-selected="true"] {
+  border-color: var(--segment-active-border);
+  background: var(--segment-active-bg);
+  color: var(--segment-active-fg);
+}
+
+
+/* ==========================================================================
+   12  PROGRESS INDICATOR (stepper)
+   --------------------------------------------------------------------------
+   Three states: .is-done, .is-active, .is-todo.
+
+   HTML:  <ol class="steps">
+            <li class="step is-done">
+              <span class="step__dot">1</span>
+              <span class="step__caption">Caption</span>
+            </li>
+            ...
+          </ol>
+   ========================================================================== */
+
+/*
+Progress Indicator
+
+A horizontal stepper that communicates multi-step flow position. Each `.step`
+must carry exactly one state modifier. The step number goes inside `.step__dot`
+and the label inside `.step__caption`.
+
+.is-done   - Completed step: lavender fill, bordered circle, blue numeral and caption
+.is-active - Current step: brand navy fill, white numeral, navy caption
+.is-todo   - Future step: neutral grey fill, grey numeral and caption
+
+Markup:
+<ol class="steps">
+  <li class="step {{modifier_class}}">
+    <span class="step__dot">1</span>
+    <span class="step__caption">Step Label</span>
+  </li>
+</ol>
+
+Styleguide 10
+*/
+
+.steps {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.step__dot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--step-size);
+  height: var(--step-size);
+  border: var(--border) solid transparent;
+  border-radius: var(--radius-pill);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-tight);
+}
+
+.step__caption {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-tight);
+}
+
+/* -- Completed ----------------------------------------------------------- */
+.step.is-done .step__dot {
+  border-color: var(--step-done-border);
+  background: var(--step-done-bg);
+  color: var(--step-done-fg);
+}
+.step.is-done .step__caption { color: var(--step-done-caption); }
+
+/* -- Active -------------------------------------------------------------- */
+.step.is-active .step__dot {
+  border-color: var(--step-active-border);
+  background: var(--step-active-bg);
+  color: var(--step-active-fg);
+}
+.step.is-active .step__caption { color: var(--step-active-caption); }
+
+/* -- Upcoming ------------------------------------------------------------ */
+.step.is-todo .step__dot {
+  border-color: var(--step-todo-border);
+  background: var(--step-todo-bg);
+  color: var(--step-todo-fg);
+}
+.step.is-todo .step__caption { color: var(--step-todo-caption); }
+
+
+/* ==========================================================================
+   13  FORM - LABELS, INPUT, TEXTAREA
+   --------------------------------------------------------------------------
+   HTML:  <div class="field">
+            <label class="field__label" for="n">Text Field Title</label>
+            <p class="field__help">Elaborations and Explanations</p>
+            <input class="input" id="n" placeholder="Name">
+          </div>
+          <textarea class="input textarea">...</textarea>
+   ========================================================================== */
+
+/*
+Form - Labels, Input & Textarea
+
+Wrap each control in `.field` to get the canonical stacked label + help text +
+input layout. Use `.input--sm` to constrain the field to `--field-w-sm` (166px).
+Combine `.input` with `.textarea` for multi-line text entry.
+
+`.form` stacks multiple `.field` groups with `--space-4` vertical gap.
+
+Markup:
+<div class="form">
+  <div class="field">
+    <label class="field__label" for="f1">Field Title</label>
+    <p class="field__help">Elaboration text.</p>
+    <input class="input" id="f1" placeholder="Placeholder">
+  </div>
+  <div class="field">
+    <label class="field__label" for="f2">Textarea</label>
+    <textarea class="input textarea" id="f2"></textarea>
+  </div>
+</div>
+
+Styleguide 11.1
+*/
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.field__label {
+  color: var(--field-label);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-snug);
+}
+
+.field__help {
+  margin: 0;
+  color: var(--field-help);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-snug);
+}
+
+.input {
+  width: 100%;
+  max-width: var(--field-w);
+  min-height: var(--control-h);
+  padding: 0 var(--control-px);
+  border: var(--field-border-width) solid var(--field-border);
+  border-radius: var(--radius);
+  background: var(--field-bg);
+  color: var(--field-fg);
+  font-family: var(--font-sans);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-tight);
+}
+
+.input::placeholder {
+  color: var(--field-placeholder);
+  opacity: 1;
+}
+
+.input--sm { max-width: var(--field-w-sm); }
+
+.textarea {
+  min-height: var(--textarea-h);
+  padding: var(--space-2) var(--control-px);
+  line-height: var(--leading-normal);
+  resize: vertical;
+}
+
+
+/* ==========================================================================
+   14  FORM - SELECT & DROPDOWN MENU
+   --------------------------------------------------------------------------
+   .select is the closed control with a solid caret; add .is-open to flip
+   the caret. .menu is the open list, with a hairline between rows and the
+   active row in NTU red.
+
+   HTML:  <div class="dropdown">
+            <button class="select is-open">
+              Drop Down Options <span class="caret" aria-hidden="true"></span>
+            </button>
+            <ul class="menu">
+              <li class="menu__item">Item 1</li>
+              <li class="menu__item is-active">Item 2</li>
+              <li class="menu__item">Item 3</li>
+            </ul>
+          </div>
+   ========================================================================== */
+
+/*
+Form - Select & Dropdown Menu
+
+A custom select control. `.select` renders the closed trigger with a pure-CSS
+triangle caret. Add `.is-open` to rotate the caret 180° and pair it with a
+visible `.menu` list below. The active menu row is styled in NTU red via
+`.menu__item.is-active` or `[aria-selected="true"]`.
+
+.is-open - Inverts the dropdown caret to indicate the open state
+
+Markup:
+<div class="dropdown">
+  <button class="select {{modifier_class}}" type="button">
+    Current Value <span class="caret" aria-hidden="true"></span>
+  </button>
+  <ul class="menu">
+    <li class="menu__item">Option A</li>
+    <li class="menu__item is-active">Option B</li>
+    <li class="menu__item">Option C</li>
+  </ul>
+</div>
+
+Styleguide 11.2
+*/
+
+.dropdown {
+  display: inline-flex;
+  flex-direction: column;
+  width: var(--field-w-sm);
+}
+
+.select {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  width: 100%;
+  min-height: var(--control-h);
+  padding: 0 var(--control-px);
+  border: var(--field-border-width) solid var(--field-border);
+  border-radius: var(--radius);
+  background: var(--field-bg);
+  color: var(--field-fg);
+  font-family: var(--font-sans);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-tight);
+  text-align: left;
+  cursor: pointer;
+}
+
+/* Solid triangle caret, pointing down; .is-open on the select flips it. */
+.caret {
+  flex: none;
+  width: 0;
+  height: 0;
+  border-top: 7px solid currentColor;
+  border-right: 5px solid transparent;
+  border-left: 5px solid transparent;
+  transition: transform 120ms ease;
+}
+
+.select.is-open .caret { transform: rotate(180deg); }
+
+.menu {
+  width: 100%;
+  margin: var(--space-1) 0 0;
+  padding: 0;
+  border: var(--field-border-width) solid var(--menu-border);
+  border-radius: var(--radius);
+  background: var(--menu-bg);
+  list-style: none;
+  overflow: hidden;
+}
+
+.menu__item {
+  display: flex;
+  align-items: center;
+  min-height: var(--control-h);
+  padding: 0 var(--control-px);
+  border-bottom: var(--border-hair) solid var(--menu-divider);
+  color: var(--menu-fg);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-tight);
+  cursor: pointer;
+}
+
+.menu__item:last-child { border-bottom: 0; }
+
+.menu__item.is-active,
+.menu__item[aria-selected="true"] {
+  color: var(--menu-fg-active);
+}
+
+
+/* ==========================================================================
+   15  CHECKBOX
+   --------------------------------------------------------------------------
+   Wraps a real <input type="checkbox"> so keyboard and form semantics keep
+   working; the native box is hidden and .checkbox__box is drawn instead.
+   Add .checkbox--danger for the NTU-red fill.
+
+   HTML:  <label class="checkbox">
+            <input type="checkbox" checked>
+            <span class="checkbox__box"></span>
+          </label>
+   ========================================================================== */
+
+/*
+Checkbox
+
+A fully custom checkbox that wraps a real `<input type="checkbox">` so native
+keyboard interaction and form serialisation are preserved. The native input is
+visually hidden but remains in the accessibility tree. The tick mark is a rotated
+CSS border "L" shape drawn via `::after`. Use `.checkbox--danger` for the
+destructive (NTU-red) checked variant.
+
+.checkbox--danger - Checked state uses NTU red background fill
+
+Markup:
+<label class="checkbox {{modifier_class}}">
+  <input type="checkbox">
+  <span class="checkbox__box"></span>
+  Label text
+</label>
+
+Styleguide 12
+*/
+
+.checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  cursor: pointer;
+}
+
+.checkbox > input[type="checkbox"] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.checkbox__box {
+  position: relative;
+  flex: none;
+  width: var(--check-size);
+  height: var(--check-size);
+  border: var(--border) solid var(--check-border);
+  border-radius: var(--radius-sm);
+  background: var(--check-bg);
+  transition: background-color 120ms ease, border-color 120ms ease;
+}
+
+/* The tick: a rotated L drawn from two borders. */
+.checkbox__box::after {
+  content: "";
+  position: absolute;
+  top: 4px;
+  left: 6px;
+  width: 9px;
+  height: 13px;
+  border: solid var(--check-mark);
+  border-width: 0 1.5px 1.5px 0;
+  transform: rotate(45deg) scale(0.85);
+  transform-origin: center;
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+
+.checkbox > input:checked + .checkbox__box {
+  border-color: var(--check-border-on);
+  background: var(--check-bg-on);
+}
+
+.checkbox > input:checked + .checkbox__box::after { opacity: 1; }
+
+.checkbox--danger > input:checked + .checkbox__box {
+  border-color: var(--check-border-danger);
+  background: var(--check-bg-danger);
+}
+
+.checkbox > input:focus-visible + .checkbox__box {
+  outline: 2px solid var(--fg-brand);
+  outline-offset: 2px;
+}
+
+
+/* ==========================================================================
+   16  BULLET POINTS
+   --------------------------------------------------------------------------
+   Numbered circles. Plain by default; .bullet--outlined adds the ring.
+
+   HTML:  <ol class="bullets">
+            <li class="bullet">1</li>
+            <li class="bullet bullet--outlined">2</li>
+          </ol>
+   ========================================================================== */
+
+/*
+Bullet Points
+
+Numbered circle markers laid out in a horizontal row. Plain filled circles by
+default; add `.bullet--outlined` to draw a brand-coloured ring border around
+the circle.
+
+.bullet--outlined - Adds a visible brand-colour border ring
+
+Markup:
+<ol class="bullets">
+  <li class="bullet">1</li>
+  <li class="bullet {{modifier_class}}">2</li>
+  <li class="bullet">3</li>
+</ol>
+
+Styleguide 13
+*/
+
+.bullets {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.bullet {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--bullet-size);
+  height: var(--bullet-size);
+  border: var(--border) solid transparent;
+  border-radius: var(--radius-pill);
+  background: var(--bullet-bg);
+  color: var(--bullet-fg);
+  font-size: var(--text-md);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-tight);
+}
+
+.bullet--outlined { border-color: var(--bullet-border); }
+
+
+/* ==========================================================================
+   17  CHIPS
+   --------------------------------------------------------------------------
+   Three kinds from the spec sheet: assist, filter (with a selected state)
+   and input (with a trailing dismiss X).
+
+   HTML:  <button class="chip">Assist</button>
+          <button class="chip is-selected">Filter - Selected</button>
+          <span class="chip">Input
+            <button class="chip__close" type="button" aria-label="Remove"></button>
+          </span>
+   ========================================================================== */
+
+/*
+Chips
+
+Compact inline tag elements from the spec sheet. Three usage patterns:
+
+- **Assist** — `<button class="chip">` triggers an action.
+- **Filter** — same markup; add `.is-selected` or `aria-pressed="true"` for the
+  selected (thicker border, filled) state.
+- **Input** — `<span class="chip">` containing a `.chip__close` dismiss button
+  rendered as an 8px CSS × glyph.
+
+.is-selected - Filter chip selected state: thicker border, lavender fill
+
+Markup:
+<button class="chip {{modifier_class}}">Chip Label</button>
+
+Styleguide 14
+*/
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--control-h);
+  padding: 0 var(--space-3);
+  border: var(--border-hair) solid var(--chip-border);
+  border-radius: var(--radius);
+  background: var(--chip-bg);
+  color: var(--chip-fg);
+  font-family: var(--font-sans);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-tight);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 120ms ease, border-color 120ms ease,
+              color 120ms ease;
+}
+
+.chip.is-selected,
+.chip[aria-pressed="true"] {
+  border-width: var(--border-thin);
+  border-color: var(--chip-selected-border);
+  background: var(--chip-selected-bg);
+  color: var(--chip-selected-fg);
+}
+
+/* Dismiss X: two 1px strokes crossing to draw an 8px glyph. The box is
+   larger than the glyph so the hit area stays comfortable; the border and
+   background resets matter because this is usually a real <button>. */
+.chip__close {
+  position: relative;
+  flex: none;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.chip__close::before,
+.chip__close::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 11px;
+  height: 1px;
+  background: currentColor;
+}
+
+.chip__close::before { transform: translate(-50%, -50%) rotate(45deg); }
+.chip__close::after  { transform: translate(-50%, -50%) rotate(-45deg); }
+
+
+/* ==========================================================================
+   18  CARDS
+   --------------------------------------------------------------------------
+   HTML:  <div class="card card--outlined">
+            <h4 class="card__title">Outlined</h4>
+          </div>
+          <div class="card card--filled">...</div>
+          <div class="card card--elevated">...</div>
+   ========================================================================== */
+
+/*
+Cards
+
+A fixed-width content container available in three visual treatments from the
+spec sheet. All share the same base `.card` class; append one treatment modifier.
+
+.card--outlined - White/dark background with a brand-colour border
+.card--filled   - Lavender/slate tinted background, no border
+.card--elevated - White/dark background with a soft `--shadow-elevated` drop-shadow
+
+Markup:
+<div class="card {{modifier_class}}">
+  <h4 class="card__title">Card Title</h4>
+  <p>Card body content.</p>
+</div>
+
+Styleguide 15
+*/
+
+.card {
+  display: flex;
+  flex-direction: column;
+  width: var(--card-w);
+  min-height: var(--card-h);
+  padding: var(--space-3);
+  border: var(--border-hair) solid transparent;
+  border-radius: var(--radius);
+  color: var(--card-fg);
+}
+
+.card__title {
+  margin: 0;
+  font-size: var(--text-md);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-snug);
+}
+
+.card--outlined {
+  border-color: var(--card-outlined-border);
+  background: var(--card-outlined-bg);
+}
+
+.card--filled {
+  background: var(--card-filled-bg);
+}
+
+.card--elevated {
+  background: var(--card-elevated-bg);
+  box-shadow: var(--shadow-elevated);
+}
+
+
+/* ==========================================================================
+   19  ALERTS
+   --------------------------------------------------------------------------
+   Light mode is a tinted wash with a coloured rule; dark mode switches to the
+   spec sheet's "Filled" treatment. Both come from the same tokens, so the
+   markup is identical in either theme.
+
+   HTML:  <div class="alert alert--success" role="status">Saved</div>
+          <div class="alert alert--error" role="alert">Error</div>
+          <div class="alert alert--info">Information</div>
+          <div class="alert alert--tips">Tips</div>
+   ========================================================================== */
+
+/*
+Alerts
+
+Full-width inline status banners. In light mode each variant renders as a
+tinted wash with a coloured border; in dark mode the tokens automatically
+switch to the spec sheet's "Filled" treatment — no extra markup or classes
+are required. Use the appropriate ARIA role for the severity level.
+
+.alert--success - Green tint; use `role="status"` for non-urgent feedback
+.alert--error   - Red tint; use `role="alert"` for immediate errors
+.alert--info    - Blue tint; informational messages
+.alert--tips    - Amber tint; tips and hints
+
+Markup:
+<div class="alert {{modifier_class}}" role="status">Message text.</div>
+
+Styleguide 16
+*/
+
+.alert {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: var(--field-w-sm);
+  min-height: var(--control-h);
+  padding: 0 var(--space-2);
+  border: var(--border) solid transparent;
+  border-radius: var(--radius);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-tight);
+}
+
+.alert--success {
+  border-color: var(--alert-success-border);
+  background: var(--alert-success-bg);
+  color: var(--alert-success-fg);
+}
+
+.alert--error {
+  border-color: var(--alert-error-border);
+  background: var(--alert-error-bg);
+  color: var(--alert-error-fg);
+}
+
+.alert--info {
+  border-color: var(--alert-info-border);
+  background: var(--alert-info-bg);
+  color: var(--alert-info-fg);
+}
+
+.alert--tips {
+  border-color: var(--alert-tips-border);
+  background: var(--alert-tips-bg);
+  color: var(--alert-tips-fg);
+}
+
+
+/* ==========================================================================
+   20  DIALOG
+   --------------------------------------------------------------------------
+   200x120 panel: title, caption, then two text actions on the bottom row.
+   The spec sheet draws it with no border and no shadow (white on white in
+   light mode); add .dialog--elevated when it needs to read as a layer.
+
+   HTML:  <div class="dialog" role="dialog" aria-labelledby="t">
+            <h4 class="dialog__title" id="t">Action</h4>
+            <p class="dialog__caption">Caption</p>
+            <div class="dialog__actions">
+              <button class="dialog__action">Cancel</button>
+              <button class="dialog__action">Delete</button>
+            </div>
+          </div>
+   ========================================================================== */
+
+/*
+Dialog
+
+A compact 200×120 confirmation panel composed of a title, a caption, and two
+ghost text-action buttons pinned to the bottom row. Renders flat by default (no
+border, no shadow — white on white in light mode). Add `.dialog--elevated` when
+the dialog needs visual separation from its host surface.
+
+Always provide `role="dialog"` and `aria-labelledby` pointing to `.dialog__title`.
+
+.dialog--elevated - Lifts the panel with `--shadow-elevated` drop-shadow
+
+Markup:
+<div class="dialog {{modifier_class}}" role="dialog" aria-labelledby="dlg-title">
+  <h4 class="dialog__title" id="dlg-title">Action Title</h4>
+  <p class="dialog__caption">Supporting caption text.</p>
+  <div class="dialog__actions">
+    <button class="dialog__action">Cancel</button>
+    <button class="dialog__action">Confirm</button>
+  </div>
+</div>
+
+Styleguide 17
+*/
+
+.dialog {
+  display: flex;
+  flex-direction: column;
+  width: var(--dialog-w);
+  min-height: var(--dialog-h);
+  padding: var(--space-5) var(--space-4) var(--space-4);
+  border-radius: var(--radius);
+  background: var(--dialog-bg);
+  color: var(--dialog-fg);
+}
+
+.dialog--elevated { box-shadow: var(--shadow-elevated); }
+
+.dialog__title {
+  margin: 0;
+  font-size: var(--text-md);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-snug);
+}
+
+.dialog__caption {
+  margin: var(--space-1) 0 0;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-snug);
+}
+
+.dialog__actions {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-top: auto;
+  padding-top: var(--space-4);
+}
+
+.dialog__action {
+  border: 0;
+  padding: 0;
+  background: none;
+  color: inherit;
+  font-family: var(--font-sans);
+  font-size: var(--text-md);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-tight);
+  cursor: pointer;
+}
+
+.dialog__action:hover { text-decoration: underline; }
+
+
+/* ==========================================================================
+   21  POP-UP CARD & SCRIM
+   --------------------------------------------------------------------------
+   A brand-coloured header strip with a close X, then a body that can hold
+   nested cards. .scrim is the 25%-black overlay the spec sheet shows
+   behind it.
+
+   HTML:  <div class="scrim">
+            <div class="popup" role="dialog">
+              <header class="popup__header">
+                <div>
+                  <h4 class="popup__title">Title</h4>
+                  <p class="popup__caption">Caption. More about ...</p>
+                </div>
+                <button class="popup__close" aria-label="Close"></button>
+              </header>
+              <div class="popup__body">
+                <div class="popup__inner">
+                  <h4 class="popup__inner-title">Title</h4>
+                  <p class="popup__inner-caption">Caption.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+   ========================================================================== */
+
+/*
+Pop-up Card & Scrim
+
+A modal panel with a brand-coloured header strip and a CSS × close button.
+Wrap `.popup` in `.scrim` to display the semi-transparent page overlay from
+the spec sheet (25% black in light mode, 65% in dark mode). One or more
+`.popup__inner` cards can be placed inside `.popup__body`.
+
+Always provide `role="dialog"` and `aria-labelledby` on `.popup`, and
+`aria-label="Close"` on `.popup__close`.
+
+Markup:
+<div class="scrim">
+  <div class="popup" role="dialog" aria-labelledby="popup-title">
+    <header class="popup__header">
+      <div>
+        <h4 class="popup__title" id="popup-title">Panel Title</h4>
+        <p class="popup__caption">Supporting description.</p>
+      </div>
+      <button class="popup__close" aria-label="Close"></button>
+    </header>
+    <div class="popup__body">
+      <div class="popup__inner">
+        <h4 class="popup__inner-title">Inner Title</h4>
+        <p class="popup__inner-caption">Inner caption.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+Styleguide 18
+*/
+
+.scrim {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6);
+  border-radius: var(--radius);
+  background: var(--scrim);
+}
+
+.popup {
+  display: flex;
+  flex-direction: column;
+  width: var(--popup-w);
+  border-radius: var(--radius);
+  background: var(--popup-body-bg);
+  overflow: hidden;
+}
+
+.popup__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-height: var(--popup-header-h);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-xs) var(--radius-xs) 0 0;
+  background: var(--popup-header-bg);
+  color: var(--popup-header-fg);
+}
+
+.popup__title {
+  margin: 0;
+  font-size: var(--text-lg);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-snug);
+}
+
+.popup__caption {
+  margin: var(--space-1) 0 0;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-normal);
+}
+
+/* Close X: same 8px crossed-strokes construction as the chip dismiss. */
+.popup__close {
+  position: relative;
+  flex: none;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.popup__close::before,
+.popup__close::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 14px;
+  height: 1px;
+  background: currentColor;
+}
+
+.popup__close::before { transform: translate(-50%, -50%) rotate(45deg); }
+.popup__close::after  { transform: translate(-50%, -50%) rotate(-45deg); }
+
+.popup__body {
+  flex: 1;
+  padding: var(--space-4);
+  background: var(--popup-body-bg);
+}
+
+.popup__inner {
+  width: var(--popup-inner-w);
+  min-height: var(--popup-inner-h);
+  padding: var(--space-3);
+  border: var(--border) solid var(--popup-inner-border);
+  border-radius: var(--radius);
+  background: var(--popup-inner-bg);
+  color: var(--popup-inner-fg);
+}
+
+.popup__inner-title {
+  margin: 0;
+  font-size: var(--text-lg);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-snug);
+}
+
+.popup__inner-caption {
+  margin: var(--space-1) 0 0 var(--space-2);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-snug);
+}
+
+.dialog--elevated { box-shadow: var(--shadow-elevated); }
+
+/* ==========================================================================
+   22  SURFACES & HELPERS
+   --------------------------------------------------------------------------
+   .panel is the rounded container the spec sheet groups components in -
+   an outlined box in light mode, a filled dark box in dark mode. Useful for
+   showing both themes side by side on one page.
+   ========================================================================== */
+
+/*
+Surfaces & Helpers
+
+Layout primitives and the `.panel` grouping container.
+
+`.panel`       - Rounded bordered container that adapts to the active theme.
+                 Outlined in light mode, slate-filled in dark mode.
+`.theme-light` - Pins a subtree to light-mode tokens and paints its own background.
+`.theme-dark`  - Pins a subtree to dark-mode tokens and paints its own background.
+`.stack`       - Vertical flex column with `--space-3` gap between children.
+`.row`         - Horizontal flex row (wrapping) with `--space-3` gap.
+`.sr-only`     - Visually hides an element while keeping it accessible to
+                 screen readers (standard clip-path technique).
+
+Markup:
+<div class="panel">
+  <div class="stack">
+    <div class="row">
+      <!-- row items -->
+    </div>
+  </div>
+</div>
+
+Styleguide 19
+*/
+
+.panel {
+  padding: var(--space-4);
+  border: var(--border) solid var(--panel-border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+/* .theme-light / .theme-dark remap the tokens in sections 03 and 04.
+   Here they also paint their own surface, so a pinned subtree does not sit on
+   the page's background. */
+.theme-light,
+.theme-dark {
+  background: var(--bg);
+  color: var(--fg);
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  overflow: hidden;
+  white-space: nowrap;
+}
