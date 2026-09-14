@@ -57,6 +57,10 @@
     --vo-amber-border: #e8c86a;
     --vo-amber-accent: #8a6a15;
 
+    --vo-green-bg: #e6f1e8;
+    --vo-green-border: #a9c9b2;
+    --vo-green-accent: #3d6b4a;
+
     --vo-neutral-bg: #f4f4f2;
     --vo-neutral-border: #d5d5d0;
     --vo-neutral-accent: #4a4a48;
@@ -267,6 +271,12 @@
     --vo-callout-bg: var(--vo-amber-bg, #fdf3d4);
     --vo-callout-border: var(--vo-amber-border, #e8c86a);
     --vo-callout-accent: var(--vo-amber-accent, #8a6a15);
+}
+
+.vo-callout--green {
+    --vo-callout-bg: var(--vo-green-bg, #e6f1e8);
+    --vo-callout-border: var(--vo-green-border, #a9c9b2);
+    --vo-callout-accent: var(--vo-green-accent, #3d6b4a);
 }
 
 .vo-callout__title {
