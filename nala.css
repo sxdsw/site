@@ -1,0 +1,514 @@
+/* ============================================================
+   nala.css
+   Design system for the NALA (NTU AI Learning Assistants) project.
+
+   Two halves:
+     1. TOKENS     — the system itself, as custom properties.
+     2. COMPONENTS — working UI built from those tokens, which is
+                     also what the Design System section displays.
+
+   Because the specimens on the page are driven by the same tokens
+   as the components, the documentation cannot drift from the system.
+
+   Load order on the page:
+       style.css  ->  visual_organisation.css  ->  nala.css
+   This file is last so it can retheme the vo- library's tokens.
+   ============================================================ */
+
+/* ============================================================
+   1. TOKENS
+   ============================================================ */
+
+:root {
+    /* ---- Colour: core ramp ---- */
+    --nala-navy:      #16233f;
+    --nala-blue-900:  #1e3a63;
+    --nala-blue-700:  #2f5f9e;
+    --nala-blue-500:  #5b90c9;
+    --nala-blue-300:  #9cc2e2;
+    --nala-blue-100:  #d5e6f4;
+
+    /* ---- Colour: neutrals ---- */
+    --nala-ink:        #1b1f27;
+    --nala-ink-soft:   #5a606b;
+    --nala-ink-faint:  #8b909a;
+    --nala-rule:       #d8dbe0;
+    --nala-surface:    #ffffff;
+    --nala-surface-alt:#f5f7fa;
+
+    /* ---- Colour: roles ---- */
+    --nala-action:        var(--nala-blue-700);
+    --nala-action-hover:  var(--nala-blue-900);
+    --nala-action-soft:   var(--nala-blue-100);
+    --nala-focus-ring:    var(--nala-blue-500);
+
+    /* ---- Type ---- */
+    --nala-font: 'Encode Sans', 'Helvetica Neue', Arial, sans-serif;
+    --nala-size-display: 1.6rem;
+    --nala-size-title:   1.05rem;
+    --nala-size-body:    0.8125rem;
+    --nala-size-label:   0.75rem;
+    --nala-size-caption: 0.68rem;
+    --nala-weight-regular: 400;
+    --nala-weight-medium:  500;
+    --nala-weight-bold:    600;
+
+    /* ---- Shape ---- */
+    --nala-radius:    6px;
+    --nala-radius-pill: 999px;
+    --nala-control-height: 2.1rem;
+
+    /* ---- Spacing ---- */
+    --nala-space-1: 0.35rem;
+    --nala-space-2: 0.6rem;
+    --nala-space-3: 1rem;
+    --nala-space-4: 1.5rem;
+    --nala-space-5: 2.25rem;
+}
+
+/* ---- Retheme the portable library for this project ----
+   visual_organisation.css ships neutral defaults; NALA points a
+   few of them at its own ramp. This is the whole integration. */
+:root {
+    --vo-ink: var(--nala-ink);
+    --vo-ink-soft: var(--nala-ink-soft);
+    --vo-rule: var(--nala-rule);
+    --vo-text-size: var(--nala-size-body);
+    --vo-radius: var(--nala-radius);
+    --vo-tree-node-accent-bg: var(--nala-blue-100);
+    --vo-tree-node-accent-border: var(--nala-blue-500);
+}
+
+/* ============================================================
+   2. PAGE CHROME
+   ============================================================ */
+
+.nala-page {
+    color: var(--nala-ink);
+}
+
+/* Section number + rule, used to open each major section. */
+.nala-rule {
+    margin: 0 0 var(--nala-space-4);
+    border: 0;
+    border-top: 1px solid var(--nala-rule);
+}
+
+/* ============================================================
+   3. TYPOGRAPHY SPECIMENS
+   ============================================================ */
+
+.nala-type-specimen {
+    display: flex;
+    flex-direction: column;
+    gap: var(--nala-space-1);
+    font-family: var(--nala-font);
+}
+
+.nala-type-specimen__name {
+    font-size: var(--nala-size-label);
+    font-weight: var(--nala-weight-bold);
+    color: var(--nala-ink);
+}
+
+.nala-type-specimen__meta {
+    font-size: var(--nala-size-caption);
+    font-weight: var(--nala-weight-regular);
+    color: var(--nala-ink-soft);
+}
+
+/* The glyph run. Breaks anywhere so it never overflows. */
+.nala-type-specimen__glyphs {
+    font-size: var(--nala-size-caption);
+    line-height: 1.5;
+    color: var(--nala-ink);
+    overflow-wrap: anywhere;
+}
+
+.nala-type-specimen--light .nala-type-specimen__glyphs { font-weight: 200; }
+.nala-type-specimen--regular .nala-type-specimen__glyphs { font-weight: 400; }
+.nala-type-specimen--bold .nala-type-specimen__glyphs { font-weight: 600; }
+
+/* ============================================================
+   4. COLOUR SWATCHES
+   Chip colour comes from the token, so a token edit updates the
+   documentation automatically.
+   ============================================================ */
+
+.nala-swatch-grid {
+    display: grid;
+    gap: var(--nala-space-2);
+    grid-template-columns: repeat(auto-fit, minmax(min(7rem, 100%), 1fr));
+}
+
+.nala-swatch {
+    display: flex;
+    flex-direction: column;
+    gap: var(--nala-space-1);
+}
+
+.nala-swatch__chip {
+    display: block;
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    background: var(--nala-swatch-color, var(--nala-surface-alt));
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: var(--nala-radius);
+}
+
+.nala-swatch__name {
+    font-size: var(--nala-size-caption);
+    font-weight: var(--nala-weight-medium);
+    color: var(--nala-ink);
+}
+
+.nala-swatch__hex {
+    font-size: var(--nala-size-caption);
+    font-weight: var(--nala-weight-regular);
+    color: var(--nala-ink-soft);
+}
+
+.nala-swatch--navy    { --nala-swatch-color: var(--nala-navy); }
+.nala-swatch--blue900 { --nala-swatch-color: var(--nala-blue-900); }
+.nala-swatch--blue700 { --nala-swatch-color: var(--nala-blue-700); }
+.nala-swatch--blue500 { --nala-swatch-color: var(--nala-blue-500); }
+.nala-swatch--blue300 { --nala-swatch-color: var(--nala-blue-300); }
+.nala-swatch--blue100 { --nala-swatch-color: var(--nala-blue-100); }
+
+/* ============================================================
+   5. BUTTONS
+   ============================================================ */
+
+.nala-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: var(--nala-control-height);
+    padding: 0 var(--nala-space-4);
+    border: 1px solid transparent;
+    border-radius: var(--nala-radius);
+    font-family: var(--nala-font);
+    font-size: var(--nala-size-label);
+    font-weight: var(--nala-weight-medium);
+    line-height: 1;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.nala-btn:focus-visible {
+    outline: 2px solid var(--nala-focus-ring);
+    outline-offset: 2px;
+}
+
+.nala-btn--primary {
+    background: var(--nala-action);
+    border-color: var(--nala-action);
+    color: #ffffff;
+}
+
+.nala-btn--primary:hover {
+    background: var(--nala-action-hover);
+    border-color: var(--nala-action-hover);
+}
+
+.nala-btn--secondary {
+    background: var(--nala-action-soft);
+    border-color: var(--nala-blue-300);
+    color: var(--nala-blue-900);
+}
+
+.nala-btn--secondary:hover { background: var(--nala-blue-300); }
+
+.nala-btn--tertiary {
+    background: var(--nala-surface-alt);
+    border-color: var(--nala-rule);
+    color: var(--nala-ink-soft);
+}
+
+.nala-btn--tertiary:hover { background: var(--nala-rule); }
+
+/* ============================================================
+   6. FORM CONTROLS
+   ============================================================ */
+
+.nala-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--nala-space-1);
+}
+
+.nala-field__label {
+    font-size: var(--nala-size-caption);
+    font-weight: var(--nala-weight-medium);
+    color: var(--nala-ink-soft);
+}
+
+.nala-input,
+.nala-select {
+    width: 100%;
+    min-height: var(--nala-control-height);
+    padding: 0 var(--nala-space-2);
+    background: var(--nala-surface);
+    border: 1px solid var(--nala-rule);
+    border-radius: var(--nala-radius);
+    font-family: var(--nala-font);
+    font-size: var(--nala-size-label);
+    font-weight: var(--nala-weight-regular);
+    color: var(--nala-ink);
+    box-sizing: border-box;
+}
+
+.nala-input::placeholder { color: var(--nala-ink-faint); }
+
+.nala-input:focus,
+.nala-select:focus {
+    outline: 2px solid var(--nala-focus-ring);
+    outline-offset: 1px;
+    border-color: var(--nala-focus-ring);
+}
+
+/* Native arrow kept — no background-image, so no asset dependency. */
+.nala-select { padding-right: var(--nala-space-1); }
+
+/* Search field: leading glyph sits in the padding. */
+.nala-input--search {
+    padding-left: 1.9rem;
+    background-image: none;
+}
+
+.nala-search {
+    position: relative;
+    display: block;
+}
+
+.nala-search__icon {
+    position: absolute;
+    top: 50%;
+    left: var(--nala-space-2);
+    transform: translateY(-50%);
+    font-size: var(--nala-size-label);
+    color: var(--nala-ink-faint);
+    pointer-events: none;
+}
+
+/* ============================================================
+   7. OPTION SELECTOR (segmented control)
+   ============================================================ */
+
+.nala-segmented {
+    display: inline-flex;
+    padding: 3px;
+    background: var(--nala-surface-alt);
+    border: 1px solid var(--nala-rule);
+    border-radius: var(--nala-radius-pill);
+    gap: 2px;
+}
+
+.nala-segmented__option {
+    min-width: 2.6rem;
+    padding: 0.3rem var(--nala-space-2);
+    border: 0;
+    border-radius: var(--nala-radius-pill);
+    background: transparent;
+    font-family: var(--nala-font);
+    font-size: var(--nala-size-caption);
+    font-weight: var(--nala-weight-medium);
+    color: var(--nala-ink-soft);
+    cursor: pointer;
+}
+
+.nala-segmented__option[aria-pressed="true"],
+.nala-segmented__option.is-selected {
+    background: var(--nala-action);
+    color: #ffffff;
+}
+
+/* ============================================================
+   8. TABLE (product UI table, distinct from vo-table)
+   ============================================================ */
+
+.nala-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--nala-font);
+    font-size: var(--nala-size-caption);
+    text-align: left;
+}
+
+.nala-table thead th {
+    padding: var(--nala-space-2);
+    background: var(--nala-surface-alt);
+    border-bottom: 1px solid var(--nala-rule);
+    font-weight: var(--nala-weight-bold);
+    color: var(--nala-ink-soft);
+}
+
+.nala-table tbody td {
+    padding: var(--nala-space-2);
+    border-bottom: 1px solid var(--nala-rule);
+    font-weight: var(--nala-weight-regular);
+    color: var(--nala-ink);
+}
+
+/* ============================================================
+   9. PROGRESS INDICATOR
+   Connector is a ::before behind each step after the first, so the
+   line length follows the step widths with no magic numbers.
+   ============================================================ */
+
+.nala-progress {
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.nala-progress__step {
+    position: relative;
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--nala-space-1);
+    text-align: center;
+    min-width: 0;
+}
+
+/* The joining line, drawn from the previous step to this one. */
+.nala-progress__step + .nala-progress__step::before {
+    content: "";
+    position: absolute;
+    top: 0.75rem;
+    right: 50%;
+    left: -50%;
+    height: 1px;
+    background: var(--nala-rule);
+}
+
+.nala-progress__marker {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    border: 1px solid var(--nala-rule);
+    border-radius: 50%;
+    background: var(--nala-surface);
+    font-size: var(--nala-size-caption);
+    font-weight: var(--nala-weight-medium);
+    color: var(--nala-ink-faint);
+}
+
+.nala-progress__label {
+    font-size: var(--nala-size-caption);
+    font-weight: var(--nala-weight-regular);
+    color: var(--nala-ink-faint);
+}
+
+/* Completed step */
+.nala-progress__step.is-complete .nala-progress__marker {
+    background: var(--nala-action);
+    border-color: var(--nala-action);
+    color: #ffffff;
+}
+
+.nala-progress__step.is-complete .nala-progress__label { color: var(--nala-ink); }
+
+.nala-progress__step.is-complete + .nala-progress__step::before,
+.nala-progress__step.is-current + .nala-progress__step::before {
+    background: var(--nala-action);
+}
+
+/* Current step */
+.nala-progress__step.is-current .nala-progress__marker {
+    background: var(--nala-surface);
+    border-color: var(--nala-action);
+    color: var(--nala-action);
+    box-shadow: 0 0 0 3px var(--nala-action-soft);
+}
+
+.nala-progress__step.is-current .nala-progress__label {
+    color: var(--nala-ink);
+    font-weight: var(--nala-weight-medium);
+}
+
+/* ============================================================
+   10. DESIGN SYSTEM SECTION LAYOUT
+   ============================================================ */
+
+.nala-spec {
+    display: flex;
+    flex-direction: column;
+    gap: var(--nala-space-2);
+}
+
+.nala-spec__title {
+    margin: 0;
+    font-size: var(--nala-size-label);
+    font-weight: var(--nala-weight-bold);
+    color: var(--nala-ink);
+}
+
+/* Holds live component samples on a neutral ground. */
+.nala-spec__demo {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: var(--nala-space-2);
+    padding: var(--nala-space-3);
+    background: var(--nala-surface-alt);
+    border: 1px solid var(--nala-rule);
+    border-radius: var(--nala-radius);
+}
+
+.nala-spec__demo--column {
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.nala-spec__demo--plain {
+    background: var(--nala-surface);
+}
+
+/* Full-width samples: as plain flex items these shrink to fit content,
+   which crushes the progress labels together. */
+.nala-spec__demo > .nala-progress,
+.nala-spec__demo > .nala-table {
+    flex: 1 1 100%;
+    width: 100%;
+}
+
+/* ============================================================
+   11. MASTHEAD
+   style.css positions #Year and #Medium absolutely at >=900px and
+   indents them by 5vw, which suits the site's full-bleed project
+   pages. This page uses a centred container instead, so the
+   masthead becomes their containing block and the 5vw indent is
+   neutralised. Font sizes and weights still come from style.css.
+   ============================================================ */
+
+.nala-masthead {
+    position: relative;
+    min-height: 5.5rem;
+    margin-bottom: var(--nala-space-4);
+}
+
+.nala-masthead #TitleName,
+.nala-masthead #Year,
+.nala-masthead #Medium {
+    margin-left: 0;
+}
+
+.nala-masthead #TitleName { margin-top: 0; }
+
+/* style.css stacks #Year above #Medium. The mockup runs project type
+   first, then year, so swap the two offsets at desktop only. Below
+   900px both are static and DOM order already gives the right order. */
+@media (min-width: 900px) {
+    .nala-masthead #Medium { margin-top: -0.3125rem; }
+    .nala-masthead #Year { margin-top: 20px; }
+}
