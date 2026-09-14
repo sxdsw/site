@@ -21,38 +21,31 @@
    ============================================================ */
 
 :root {
-    /* ---- Colour: sampled pixel-exact from the deck in mediaroleplay/ ----
-       Fills used for callouts and panels, plus the near-black used for
-       every border and all body text. Do not eyeball these; they are
-       measured values. */
-    --roleplay-ink:        #292929;
+    /* ---- Colour: core ramp ---- */
+    --roleplay-navy:     #1d3557;
+    --roleplay-blue-900: #24496f;
+    --roleplay-blue-700: #2f6690;
+    --roleplay-blue-500: #5b9bc4;
+    --roleplay-blue-300: #a7cbe0;
+    --roleplay-blue-100: #dceaf3;
 
-    --roleplay-periwinkle: #b1c5e6;
-    --roleplay-green:      #c5e4c7;
-    --roleplay-pink:       #f2b6d2;
-    --roleplay-yellow:     #ffdf62;
-    --roleplay-blue-light: #c6e7ff;
-    --roleplay-blue-mid:   #97bfe6;
-    --roleplay-blue-pale:  #d0eaf7;
-    --roleplay-cyan:       #4cc9f4;
-    --roleplay-cyan-light: #8ad7ee;
-    --roleplay-lime:       #e2ffaa;
-    --roleplay-lavender:   #f4ecff;
+    /* ---- Colour: warm accent, used for panels and highlights ---- */
+    --roleplay-accent:      #e0a92e;
+    --roleplay-accent-soft: #fdf3d4;
 
     /* ---- Colour: neutrals ---- */
+    --roleplay-ink:         #23252b;
     --roleplay-ink-soft:    #5c626d;
     --roleplay-ink-faint:   #8d929c;
-    --roleplay-rule:        #292929;
+    --roleplay-rule:        #d9dce1;
     --roleplay-surface:     #ffffff;
-    --roleplay-surface-alt: #f4f9fd;
+    --roleplay-surface-alt: #f4f7f9;
 
-    /* ---- Colour: roles ----
-       The deck puts dark text on bright fills rather than white on dark,
-       so the action colour is a light cyan carrying ink-coloured text. */
-    --roleplay-action:       var(--roleplay-cyan);
-    --roleplay-action-hover: var(--roleplay-cyan-light);
-    --roleplay-action-soft:  var(--roleplay-blue-pale);
-    --roleplay-focus-ring:   var(--roleplay-ink);
+    /* ---- Colour: roles ---- */
+    --roleplay-action:       var(--roleplay-blue-700);
+    --roleplay-action-hover: var(--roleplay-blue-900);
+    --roleplay-action-soft:  var(--roleplay-blue-100);
+    --roleplay-focus-ring:   var(--roleplay-blue-500);
 
     /* ---- Type ---- */
     --roleplay-font: 'Encode Sans', 'Helvetica Neue', Arial, sans-serif;
@@ -64,10 +57,9 @@
     --roleplay-weight-medium:  500;
     --roleplay-weight-bold:    600;
 
-    /* ---- Shape: the deck draws 2px ink borders on ~10px radius ---- */
-    --roleplay-radius: 10px;
+    /* ---- Shape ---- */
+    --roleplay-radius: 6px;
     --roleplay-radius-pill: 999px;
-    --roleplay-border-width: 2px;
     --roleplay-control-height: 2.1rem;
 
     /* ---- Spacing ---- */
@@ -78,64 +70,17 @@
     --roleplay-space-5: 2.25rem;
 }
 
-/* ---- Retheme the portable library to this project's design system ----
-   Every value below is a token visual_organisation.css already exposes, so
-   this file changes the library's appearance without editing it. nala.html
-   does not load roleplay.css, so the NALA page is unaffected. */
+/* ---- Retheme the portable library for this project ----
+   visual_organisation.css ships neutral defaults; this points a few
+   of them at the project's own ramp. This is the whole integration. */
 :root {
     --vo-ink: var(--roleplay-ink);
     --vo-ink-soft: var(--roleplay-ink-soft);
-    --vo-rule: var(--roleplay-ink);
+    --vo-rule: var(--roleplay-rule);
     --vo-text-size: var(--roleplay-size-body);
     --vo-radius: var(--roleplay-radius);
-    --vo-radius-lg: var(--roleplay-radius);
-
-    /* The deck outlines every block in 2px ink rather than a tinted hairline. */
-    --vo-border-width: var(--roleplay-border-width);
-
-    /* Callout fills, with ink borders and ink titles to match the deck. */
-    --vo-blue-bg: var(--roleplay-periwinkle);
-    --vo-blue-border: var(--roleplay-ink);
-    --vo-blue-accent: var(--roleplay-ink);
-
-    --vo-green-bg: var(--roleplay-green);
-    --vo-green-border: var(--roleplay-ink);
-    --vo-green-accent: var(--roleplay-ink);
-
-    --vo-pink-bg: var(--roleplay-pink);
-    --vo-pink-border: var(--roleplay-ink);
-    --vo-pink-accent: var(--roleplay-ink);
-
-    --vo-amber-bg: var(--roleplay-yellow);
-    --vo-amber-border: var(--roleplay-ink);
-    --vo-amber-accent: var(--roleplay-ink);
-
-    --vo-neutral-bg: var(--roleplay-blue-pale);
-    --vo-neutral-border: var(--roleplay-ink);
-    --vo-neutral-accent: var(--roleplay-ink);
-
-    /* Tables take the deck's mid blue for the header band. */
-    --vo-table-head-bg: var(--roleplay-blue-mid);
-    --vo-table-head-ink: var(--roleplay-ink);
-    --vo-table-zebra: #eef6fc;
-    --vo-table-cell-bg: var(--roleplay-surface);
-    --vo-table-green-head-bg: var(--roleplay-blue-mid);
-    --vo-table-green-head-ink: var(--roleplay-ink);
-    --vo-table-green-zebra: #eef6fc;
-
-    /* Panels and cards, replacing the library's default cream. */
-    --vo-panel-bg: var(--roleplay-blue-pale);
-    --vo-card-bg: var(--roleplay-surface);
-    --vo-card-border: var(--roleplay-ink);
-
-    /* Tree diagram */
-    --vo-tree-line: var(--roleplay-ink);
-    --vo-tree-node-bg: var(--roleplay-surface);
-    --vo-tree-node-border: var(--roleplay-ink);
-    --vo-tree-node-accent-bg: var(--roleplay-blue-light);
-    --vo-tree-node-accent-border: var(--roleplay-ink);
-
-    --vo-slot-bg: var(--roleplay-blue-pale);
+    --vo-tree-node-accent-bg: var(--roleplay-blue-100);
+    --vo-tree-node-accent-border: var(--roleplay-blue-500);
 }
 
 /* ============================================================
@@ -228,7 +173,7 @@
     width: 100%;
     aspect-ratio: 3 / 2;
     background: var(--roleplay-swatch-color, var(--roleplay-surface-alt));
-    border: var(--roleplay-border-width) solid var(--roleplay-ink);
+    border: 1px solid rgba(0, 0, 0, 0.08);
     border-radius: var(--roleplay-radius);
 }
 
@@ -244,12 +189,12 @@
     color: var(--roleplay-ink-soft);
 }
 
-.roleplay-swatch--periwinkle { --roleplay-swatch-color: var(--roleplay-periwinkle); }
-.roleplay-swatch--green      { --roleplay-swatch-color: var(--roleplay-green); }
-.roleplay-swatch--pink       { --roleplay-swatch-color: var(--roleplay-pink); }
-.roleplay-swatch--yellow     { --roleplay-swatch-color: var(--roleplay-yellow); }
-.roleplay-swatch--cyan       { --roleplay-swatch-color: var(--roleplay-cyan); }
-.roleplay-swatch--bluepale   { --roleplay-swatch-color: var(--roleplay-blue-pale); }
+.roleplay-swatch--navy    { --roleplay-swatch-color: var(--roleplay-navy); }
+.roleplay-swatch--blue700 { --roleplay-swatch-color: var(--roleplay-blue-700); }
+.roleplay-swatch--blue500 { --roleplay-swatch-color: var(--roleplay-blue-500); }
+.roleplay-swatch--blue300 { --roleplay-swatch-color: var(--roleplay-blue-300); }
+.roleplay-swatch--blue100 { --roleplay-swatch-color: var(--roleplay-blue-100); }
+.roleplay-swatch--accent  { --roleplay-swatch-color: var(--roleplay-accent); }
 
 /* ============================================================
    5. BUTTONS
@@ -261,7 +206,7 @@
     justify-content: center;
     min-height: var(--roleplay-control-height);
     padding: 0 var(--roleplay-space-4);
-    border: var(--roleplay-border-width) solid transparent;
+    border: 1px solid transparent;
     border-radius: var(--roleplay-radius);
     font-family: var(--roleplay-font);
     font-size: var(--roleplay-size-label);
@@ -279,30 +224,30 @@
 
 .roleplay-btn--primary {
     background: var(--roleplay-action);
-    border-color: var(--roleplay-ink);
-    color: var(--roleplay-ink);
+    border-color: var(--roleplay-action);
+    color: #ffffff;
 }
 
 .roleplay-btn--primary:hover {
     background: var(--roleplay-action-hover);
-    border-color: var(--roleplay-ink);
+    border-color: var(--roleplay-action-hover);
 }
 
 .roleplay-btn--secondary {
     background: var(--roleplay-action-soft);
-    border-color: var(--roleplay-ink);
-    color: var(--roleplay-ink);
+    border-color: var(--roleplay-blue-300);
+    color: var(--roleplay-blue-900);
 }
 
-.roleplay-btn--secondary:hover { background: var(--roleplay-cyan-light); }
+.roleplay-btn--secondary:hover { background: var(--roleplay-blue-300); }
 
 .roleplay-btn--tertiary {
-    background: var(--roleplay-surface);
-    border-color: var(--roleplay-ink);
-    color: var(--roleplay-ink);
+    background: var(--roleplay-surface-alt);
+    border-color: var(--roleplay-rule);
+    color: var(--roleplay-ink-soft);
 }
 
-.roleplay-btn--tertiary:hover { background: var(--roleplay-blue-pale); }
+.roleplay-btn--tertiary:hover { background: var(--roleplay-rule); }
 
 /* ============================================================
    6. FORM CONTROLS
@@ -326,7 +271,7 @@
     min-height: var(--roleplay-control-height);
     padding: 0 var(--roleplay-space-2);
     background: var(--roleplay-surface);
-    border: var(--roleplay-border-width) solid var(--roleplay-ink);
+    border: 1px solid var(--roleplay-rule);
     border-radius: var(--roleplay-radius);
     font-family: var(--roleplay-font);
     font-size: var(--roleplay-size-label);
@@ -390,7 +335,7 @@
     justify-content: center;
     width: 1.5rem;
     height: 1.5rem;
-    border: var(--roleplay-border-width) solid var(--roleplay-ink);
+    border: 1px solid var(--roleplay-rule);
     border-radius: 50%;
     background: var(--roleplay-surface);
     font-size: var(--roleplay-size-caption);
@@ -406,8 +351,8 @@
 
 .roleplay-progress__step.is-complete .roleplay-progress__marker {
     background: var(--roleplay-action);
-    border-color: var(--roleplay-ink);
-    color: var(--roleplay-ink);
+    border-color: var(--roleplay-action);
+    color: #ffffff;
 }
 
 .roleplay-progress__step.is-complete .roleplay-progress__label { color: var(--roleplay-ink); }
@@ -419,8 +364,8 @@
 
 .roleplay-progress__step.is-current .roleplay-progress__marker {
     background: var(--roleplay-surface);
-    border-color: var(--roleplay-ink);
-    color: var(--roleplay-ink);
+    border-color: var(--roleplay-action);
+    color: var(--roleplay-action);
     box-shadow: 0 0 0 3px var(--roleplay-action-soft);
 }
 
@@ -440,7 +385,7 @@
     gap: var(--roleplay-space-1);
     padding: var(--roleplay-space-3);
     background: var(--roleplay-surface);
-    border: var(--roleplay-border-width) solid var(--roleplay-ink);
+    border: 1px solid var(--roleplay-rule);
     border-radius: var(--roleplay-radius);
 }
 
@@ -473,14 +418,13 @@
     padding: 0.15rem var(--roleplay-space-2);
     border-radius: var(--roleplay-radius-pill);
     background: var(--roleplay-action-soft);
-    border: 1px solid var(--roleplay-ink);
     font-size: var(--roleplay-size-caption);
     font-weight: var(--roleplay-weight-medium);
-    color: var(--roleplay-ink);
+    color: var(--roleplay-blue-900);
 }
 
 .roleplay-pill--accent {
-    background: var(--roleplay-yellow);
+    background: var(--roleplay-accent-soft);
     color: #7a5c12;
 }
 
@@ -509,7 +453,7 @@
     gap: var(--roleplay-space-2);
     padding: var(--roleplay-space-3);
     background: var(--roleplay-surface-alt);
-    border: var(--roleplay-border-width) solid var(--roleplay-ink);
+    border: 1px solid var(--roleplay-rule);
     border-radius: var(--roleplay-radius);
 }
 
