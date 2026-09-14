@@ -1,0 +1,473 @@
+/* ============================================================
+   roleplay.css
+   Design system for the AI Role-Play for Pre-Service Teachers
+   project.
+
+   Two halves, mirroring nala.css:
+     1. TOKENS     — the system itself, as custom properties.
+     2. COMPONENTS — working UI built from those tokens, which is
+                     also what the design-system board displays.
+
+   The board's swatches and specimens read from the same tokens the
+   components use, so the documentation cannot drift from the system.
+
+   Load order on the page:
+       style.css  ->  visual_organisation.css  ->  roleplay.css
+   This file is last so it can retheme the vo- library's tokens.
+   ============================================================ */
+
+/* ============================================================
+   1. TOKENS
+   ============================================================ */
+
+:root {
+    /* ---- Colour: core ramp ---- */
+    --roleplay-navy:     #1d3557;
+    --roleplay-blue-900: #24496f;
+    --roleplay-blue-700: #2f6690;
+    --roleplay-blue-500: #5b9bc4;
+    --roleplay-blue-300: #a7cbe0;
+    --roleplay-blue-100: #dceaf3;
+
+    /* ---- Colour: warm accent, used for panels and highlights ---- */
+    --roleplay-accent:      #e0a92e;
+    --roleplay-accent-soft: #fdf3d4;
+
+    /* ---- Colour: neutrals ---- */
+    --roleplay-ink:         #23252b;
+    --roleplay-ink-soft:    #5c626d;
+    --roleplay-ink-faint:   #8d929c;
+    --roleplay-rule:        #d9dce1;
+    --roleplay-surface:     #ffffff;
+    --roleplay-surface-alt: #f4f7f9;
+
+    /* ---- Colour: roles ---- */
+    --roleplay-action:       var(--roleplay-blue-700);
+    --roleplay-action-hover: var(--roleplay-blue-900);
+    --roleplay-action-soft:  var(--roleplay-blue-100);
+    --roleplay-focus-ring:   var(--roleplay-blue-500);
+
+    /* ---- Type ---- */
+    --roleplay-font: 'Encode Sans', 'Helvetica Neue', Arial, sans-serif;
+    --roleplay-size-title:   1.05rem;
+    --roleplay-size-body:    0.8125rem;
+    --roleplay-size-label:   0.75rem;
+    --roleplay-size-caption: 0.68rem;
+    --roleplay-weight-regular: 400;
+    --roleplay-weight-medium:  500;
+    --roleplay-weight-bold:    600;
+
+    /* ---- Shape ---- */
+    --roleplay-radius: 6px;
+    --roleplay-radius-pill: 999px;
+    --roleplay-control-height: 2.1rem;
+
+    /* ---- Spacing ---- */
+    --roleplay-space-1: 0.35rem;
+    --roleplay-space-2: 0.6rem;
+    --roleplay-space-3: 1rem;
+    --roleplay-space-4: 1.5rem;
+    --roleplay-space-5: 2.25rem;
+}
+
+/* ---- Retheme the portable library for this project ----
+   visual_organisation.css ships neutral defaults; this points a few
+   of them at the project's own ramp. This is the whole integration. */
+:root {
+    --vo-ink: var(--roleplay-ink);
+    --vo-ink-soft: var(--roleplay-ink-soft);
+    --vo-rule: var(--roleplay-rule);
+    --vo-text-size: var(--roleplay-size-body);
+    --vo-radius: var(--roleplay-radius);
+    --vo-tree-node-accent-bg: var(--roleplay-blue-100);
+    --vo-tree-node-accent-border: var(--roleplay-blue-500);
+}
+
+/* ============================================================
+   2. PAGE CHROME
+   ============================================================ */
+
+.roleplay-page {
+    color: var(--roleplay-ink);
+}
+
+/* style.css positions #Year and #Medium absolutely at >=900px and
+   indents them by 5vw, which suits the site's full-bleed project
+   pages. This page uses a centred container instead, so the masthead
+   becomes their containing block and the 5vw indent is neutralised.
+   Font sizes and weights still come from style.css. */
+.roleplay-masthead {
+    position: relative;
+    min-height: 5.5rem;
+    margin-bottom: var(--roleplay-space-4);
+}
+
+.roleplay-masthead #TitleName,
+.roleplay-masthead #Year,
+.roleplay-masthead #Medium {
+    margin-left: 0;
+}
+
+.roleplay-masthead #TitleName { margin-top: 0; }
+
+@media (min-width: 900px) {
+    .roleplay-masthead #Medium { margin-top: -0.3125rem; }
+    .roleplay-masthead #Year { margin-top: 20px; }
+}
+
+/* ============================================================
+   3. TYPOGRAPHY SPECIMENS
+   ============================================================ */
+
+.roleplay-type-specimen {
+    display: flex;
+    flex-direction: column;
+    gap: var(--roleplay-space-1);
+    font-family: var(--roleplay-font);
+}
+
+.roleplay-type-specimen__name {
+    font-size: var(--roleplay-size-label);
+    font-weight: var(--roleplay-weight-bold);
+    color: var(--roleplay-ink);
+}
+
+.roleplay-type-specimen__meta {
+    font-size: var(--roleplay-size-caption);
+    font-weight: var(--roleplay-weight-regular);
+    color: var(--roleplay-ink-soft);
+}
+
+/* The glyph run. Breaks anywhere so it never overflows. */
+.roleplay-type-specimen__glyphs {
+    font-size: var(--roleplay-size-caption);
+    line-height: 1.5;
+    color: var(--roleplay-ink);
+    overflow-wrap: anywhere;
+}
+
+.roleplay-type-specimen--light .roleplay-type-specimen__glyphs { font-weight: 200; }
+.roleplay-type-specimen--regular .roleplay-type-specimen__glyphs { font-weight: 400; }
+.roleplay-type-specimen--bold .roleplay-type-specimen__glyphs { font-weight: 600; }
+
+/* ============================================================
+   4. COLOUR SWATCHES
+   Chip colour comes from the token, so a token edit updates the
+   documentation automatically.
+   ============================================================ */
+
+.roleplay-swatch-grid {
+    display: grid;
+    gap: var(--roleplay-space-2);
+    grid-template-columns: repeat(auto-fit, minmax(min(7rem, 100%), 1fr));
+}
+
+.roleplay-swatch {
+    display: flex;
+    flex-direction: column;
+    gap: var(--roleplay-space-1);
+}
+
+.roleplay-swatch__chip {
+    display: block;
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    background: var(--roleplay-swatch-color, var(--roleplay-surface-alt));
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: var(--roleplay-radius);
+}
+
+.roleplay-swatch__name {
+    font-size: var(--roleplay-size-caption);
+    font-weight: var(--roleplay-weight-medium);
+    color: var(--roleplay-ink);
+}
+
+.roleplay-swatch__hex {
+    font-size: var(--roleplay-size-caption);
+    font-weight: var(--roleplay-weight-regular);
+    color: var(--roleplay-ink-soft);
+}
+
+.roleplay-swatch--navy    { --roleplay-swatch-color: var(--roleplay-navy); }
+.roleplay-swatch--blue700 { --roleplay-swatch-color: var(--roleplay-blue-700); }
+.roleplay-swatch--blue500 { --roleplay-swatch-color: var(--roleplay-blue-500); }
+.roleplay-swatch--blue300 { --roleplay-swatch-color: var(--roleplay-blue-300); }
+.roleplay-swatch--blue100 { --roleplay-swatch-color: var(--roleplay-blue-100); }
+.roleplay-swatch--accent  { --roleplay-swatch-color: var(--roleplay-accent); }
+
+/* ============================================================
+   5. BUTTONS
+   ============================================================ */
+
+.roleplay-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: var(--roleplay-control-height);
+    padding: 0 var(--roleplay-space-4);
+    border: 1px solid transparent;
+    border-radius: var(--roleplay-radius);
+    font-family: var(--roleplay-font);
+    font-size: var(--roleplay-size-label);
+    font-weight: var(--roleplay-weight-medium);
+    line-height: 1;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.roleplay-btn:focus-visible {
+    outline: 2px solid var(--roleplay-focus-ring);
+    outline-offset: 2px;
+}
+
+.roleplay-btn--primary {
+    background: var(--roleplay-action);
+    border-color: var(--roleplay-action);
+    color: #ffffff;
+}
+
+.roleplay-btn--primary:hover {
+    background: var(--roleplay-action-hover);
+    border-color: var(--roleplay-action-hover);
+}
+
+.roleplay-btn--secondary {
+    background: var(--roleplay-action-soft);
+    border-color: var(--roleplay-blue-300);
+    color: var(--roleplay-blue-900);
+}
+
+.roleplay-btn--secondary:hover { background: var(--roleplay-blue-300); }
+
+.roleplay-btn--tertiary {
+    background: var(--roleplay-surface-alt);
+    border-color: var(--roleplay-rule);
+    color: var(--roleplay-ink-soft);
+}
+
+.roleplay-btn--tertiary:hover { background: var(--roleplay-rule); }
+
+/* ============================================================
+   6. FORM CONTROLS
+   ============================================================ */
+
+.roleplay-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--roleplay-space-1);
+}
+
+.roleplay-field__label {
+    font-size: var(--roleplay-size-caption);
+    font-weight: var(--roleplay-weight-medium);
+    color: var(--roleplay-ink-soft);
+}
+
+.roleplay-input,
+.roleplay-select {
+    width: 100%;
+    min-height: var(--roleplay-control-height);
+    padding: 0 var(--roleplay-space-2);
+    background: var(--roleplay-surface);
+    border: 1px solid var(--roleplay-rule);
+    border-radius: var(--roleplay-radius);
+    font-family: var(--roleplay-font);
+    font-size: var(--roleplay-size-label);
+    font-weight: var(--roleplay-weight-regular);
+    color: var(--roleplay-ink);
+    box-sizing: border-box;
+}
+
+.roleplay-input::placeholder { color: var(--roleplay-ink-faint); }
+
+.roleplay-input:focus,
+.roleplay-select:focus {
+    outline: 2px solid var(--roleplay-focus-ring);
+    outline-offset: 1px;
+    border-color: var(--roleplay-focus-ring);
+}
+
+/* Native arrow kept — no background-image, so no asset dependency. */
+.roleplay-select { padding-right: var(--roleplay-space-1); }
+
+/* ============================================================
+   7. PROGRESS INDICATOR
+   Connector is a ::before behind each step after the first, so the
+   line length follows the step widths with no magic numbers.
+   ============================================================ */
+
+.roleplay-progress {
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.roleplay-progress__step {
+    position: relative;
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--roleplay-space-1);
+    text-align: center;
+    min-width: 0;
+}
+
+.roleplay-progress__step + .roleplay-progress__step::before {
+    content: "";
+    position: absolute;
+    top: 0.75rem;
+    right: 50%;
+    left: -50%;
+    height: 1px;
+    background: var(--roleplay-rule);
+}
+
+.roleplay-progress__marker {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    border: 1px solid var(--roleplay-rule);
+    border-radius: 50%;
+    background: var(--roleplay-surface);
+    font-size: var(--roleplay-size-caption);
+    font-weight: var(--roleplay-weight-medium);
+    color: var(--roleplay-ink-faint);
+}
+
+.roleplay-progress__label {
+    font-size: var(--roleplay-size-caption);
+    font-weight: var(--roleplay-weight-regular);
+    color: var(--roleplay-ink-faint);
+}
+
+.roleplay-progress__step.is-complete .roleplay-progress__marker {
+    background: var(--roleplay-action);
+    border-color: var(--roleplay-action);
+    color: #ffffff;
+}
+
+.roleplay-progress__step.is-complete .roleplay-progress__label { color: var(--roleplay-ink); }
+
+.roleplay-progress__step.is-complete + .roleplay-progress__step::before,
+.roleplay-progress__step.is-current + .roleplay-progress__step::before {
+    background: var(--roleplay-action);
+}
+
+.roleplay-progress__step.is-current .roleplay-progress__marker {
+    background: var(--roleplay-surface);
+    border-color: var(--roleplay-action);
+    color: var(--roleplay-action);
+    box-shadow: 0 0 0 3px var(--roleplay-action-soft);
+}
+
+.roleplay-progress__step.is-current .roleplay-progress__label {
+    color: var(--roleplay-ink);
+    font-weight: var(--roleplay-weight-medium);
+}
+
+/* ============================================================
+   8. CARD
+   The product-UI card shown on the board, distinct from vo-card.
+   ============================================================ */
+
+.roleplay-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--roleplay-space-1);
+    padding: var(--roleplay-space-3);
+    background: var(--roleplay-surface);
+    border: 1px solid var(--roleplay-rule);
+    border-radius: var(--roleplay-radius);
+}
+
+.roleplay-card__eyebrow {
+    font-size: var(--roleplay-size-caption);
+    font-weight: var(--roleplay-weight-medium);
+    color: var(--roleplay-action);
+}
+
+.roleplay-card__title {
+    margin: 0;
+    font-size: var(--roleplay-size-label);
+    font-weight: var(--roleplay-weight-bold);
+    color: var(--roleplay-ink);
+}
+
+.roleplay-card__body {
+    margin: 0;
+    font-size: var(--roleplay-size-caption);
+    font-weight: var(--roleplay-weight-regular);
+    line-height: 1.55;
+    color: var(--roleplay-ink-soft);
+}
+
+/* Status pill used on cards and in the conversation view. */
+.roleplay-pill {
+    display: inline-flex;
+    align-items: center;
+    align-self: flex-start;
+    padding: 0.15rem var(--roleplay-space-2);
+    border-radius: var(--roleplay-radius-pill);
+    background: var(--roleplay-action-soft);
+    font-size: var(--roleplay-size-caption);
+    font-weight: var(--roleplay-weight-medium);
+    color: var(--roleplay-blue-900);
+}
+
+.roleplay-pill--accent {
+    background: var(--roleplay-accent-soft);
+    color: #7a5c12;
+}
+
+/* ============================================================
+   9. DESIGN SYSTEM BOARD LAYOUT
+   ============================================================ */
+
+.roleplay-spec {
+    display: flex;
+    flex-direction: column;
+    gap: var(--roleplay-space-2);
+}
+
+.roleplay-spec__title {
+    margin: 0;
+    font-size: var(--roleplay-size-label);
+    font-weight: var(--roleplay-weight-bold);
+    color: var(--roleplay-ink);
+}
+
+/* Holds live component samples on a neutral ground. */
+.roleplay-spec__demo {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: var(--roleplay-space-2);
+    padding: var(--roleplay-space-3);
+    background: var(--roleplay-surface-alt);
+    border: 1px solid var(--roleplay-rule);
+    border-radius: var(--roleplay-radius);
+}
+
+.roleplay-spec__demo--column {
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.roleplay-spec__demo--plain { background: var(--roleplay-surface); }
+
+/* Full-width samples: as plain flex items these shrink to fit content,
+   which crushes the progress labels together. */
+.roleplay-spec__demo > .roleplay-progress,
+.roleplay-spec__demo > .roleplay-card {
+    flex: 1 1 100%;
+    width: 100%;
+}
