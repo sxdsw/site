@@ -53,6 +53,11 @@ a.linkPage:active {
     color: inherit;
 }
 
+/* The unlocked work project currently showing in the frame. */
+a.linkPage[aria-current="true"] {
+    text-decoration: underline;
+}
+
 details {
     display: block !important;
     width: 100%;

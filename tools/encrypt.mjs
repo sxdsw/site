@@ -1,6 +1,6 @@
 // Encrypts work-src/ into pages/work/ as AES-256-GCM ciphertext.
 //
-// Usage:  WORK_PASSPHRASE='your passphrase' node tools/encrypt.mjs
+// Usage:  WORK_PASSWORD='your password' node tools/encrypt.mjs
 //     or: node tools/encrypt.mjs        (prompts, input hidden)
 //
 // work-src/ holds the plaintext and is gitignored. Only the .enc output and
@@ -18,7 +18,7 @@ const ITERATIONS = 250_000;
 // Pages offered in the gate's index, in order.
 const ENTRIES = [
   { file: 'nala.html', title: 'NALA' },
-  { file: 'airoleplay.html', title: 'AI Role-Play' },
+  { file: 'roleplay.html', title: 'AI Role-Play' },
 ];
 
 async function walk(dir) {
@@ -52,8 +52,8 @@ function askHidden(prompt) {
   });
 }
 
-async function deriveKey(passphrase, salt) {
-  const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(passphrase), 'PBKDF2', false, [
+async function deriveKey(password, salt) {
+  const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(password), 'PBKDF2', false, [
     'deriveKey',
   ]);
   return crypto.subtle.deriveKey(
@@ -77,14 +77,14 @@ async function seal(key, bytes) {
 
 const b64 = (u8) => Buffer.from(u8).toString('base64');
 
-const passphrase = process.env.WORK_PASSPHRASE ?? (await askHidden('Passphrase: '));
-if (!passphrase) {
-  console.error('No passphrase given — aborting.');
+const password = process.env.WORK_PASSWORD ?? (await askHidden('password: '));
+if (!password) {
+  console.error('No password given — aborting.');
   process.exit(1);
 }
 
 const salt = crypto.getRandomValues(new Uint8Array(16));
-const key = await deriveKey(passphrase, salt);
+const key = await deriveKey(password, salt);
 
 await rm(OUT, { recursive: true, force: true });
 await mkdir(OUT, { recursive: true });
@@ -100,7 +100,7 @@ for (const abs of files) {
   total += sealed.length;
 }
 
-// A known plaintext so the gate can tell a wrong passphrase from a corrupt file.
+// A known plaintext so the gate can tell a wrong password from a corrupt file.
 const check = await seal(key, new TextEncoder().encode('unlocked'));
 
 await writeFile(
