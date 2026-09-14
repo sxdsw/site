@@ -581,6 +581,18 @@
 .vo-tree__children--stack > li::before,
 .vo-tree__children--stack > li::after { display: none; }
 
+/* A vertical group of nodes hanging off one branch, so a root can fork
+   into columns of related items rather than a flat row. */
+.vo-tree__group {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    gap: var(--vo-space-2, 0.6rem);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
 .vo-node {
     display: block;
     padding: var(--vo-space-2, 0.6rem) var(--vo-space-2, 0.6rem);
