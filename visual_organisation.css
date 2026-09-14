@@ -1,0 +1,643 @@
+/* ============================================================
+   visual_organisation.css
+   A portable library for organising information on a page:
+   callout boxes, comparison tables, highlight panels, org-chart
+   trees and image slots.
+
+   COPY-PASTE READY. This file is self-contained — it declares its
+   own tokens below and every var() carries a literal fallback, so
+   it renders correctly on its own with no other stylesheet loaded.
+   It sets no fonts and no body styles, so it will not fight the
+   host project's typography.
+
+   All classes are namespaced `vo-`.
+
+   TO RETHEME: redeclare any of the tokens in :root below, in your
+   own stylesheet loaded after this one. Nothing else needs editing.
+   ============================================================ */
+
+:root {
+    /* Rhythm */
+    --vo-space-1: 0.35rem;
+    --vo-space-2: 0.6rem;
+    --vo-space-3: 1rem;
+    --vo-space-4: 1.5rem;
+    --vo-space-5: 2.25rem;
+    --vo-space-6: 3.5rem;
+
+    /* Shape */
+    --vo-radius: 6px;
+    --vo-radius-lg: 10px;
+    --vo-border-width: 1px;
+
+    /* Text */
+    --vo-ink: #1b1b1b;
+    --vo-ink-soft: #55565a;
+    --vo-rule: #dcdcdc;
+    --vo-text-size: 0.8125rem;
+    --vo-line-height: 1.6;
+
+    /* Page container */
+    --vo-container-max: 68rem;
+    --vo-container-gutter: 1.25rem;
+
+    /* Grid: the smallest a column may get before the row wraps */
+    --vo-grid-min: 16rem;
+
+    /* Callout palettes — bg / border / accent per variant */
+    --vo-pink-bg: #fce8ee;
+    --vo-pink-border: #e9aac0;
+    --vo-pink-accent: #b34a6d;
+
+    --vo-blue-bg: #e3edf8;
+    --vo-blue-border: #9fbfdf;
+    --vo-blue-accent: #2f5f92;
+
+    --vo-amber-bg: #fdf3d4;
+    --vo-amber-border: #e8c86a;
+    --vo-amber-accent: #8a6a15;
+
+    --vo-neutral-bg: #f4f4f2;
+    --vo-neutral-border: #d5d5d0;
+    --vo-neutral-accent: #4a4a48;
+
+    /* Tables */
+    --vo-table-head-bg: #dcd8cd;
+    --vo-table-head-ink: #23231f;
+    --vo-table-zebra: #f6f5f1;
+    --vo-table-cell-bg: #ffffff;
+
+    --vo-table-green-head-bg: #9cc0a5;
+    --vo-table-green-head-ink: #16291c;
+    --vo-table-green-zebra: #edf4ee;
+
+    /* Panels and cards */
+    --vo-panel-bg: #fdf9e6;
+    --vo-card-bg: #f9eec0;
+    --vo-card-border: #e8d79a;
+
+    /* Tree diagram */
+    --vo-tree-line: #9a9a96;
+    --vo-tree-node-bg: #ffffff;
+    --vo-tree-node-border: #8d8d88;
+    --vo-tree-node-accent-bg: #cfe0f1;
+    --vo-tree-node-accent-border: #5f8fbf;
+
+    /* Image slots */
+    --vo-slot-bg: #e9e9e6;
+}
+
+/* Scope a border-box reset to this library's own elements only.
+   Host projects often set this globally, but this file must not
+   depend on that, and must not impose it on anything else. */
+[class^="vo-"],
+[class*=" vo-"],
+[class^="vo-"]::before,
+[class^="vo-"]::after,
+[class*=" vo-"]::before,
+[class*=" vo-"]::after {
+    box-sizing: border-box;
+}
+
+/* ============================================================
+   LAYOUT SCAFFOLD
+   ============================================================ */
+
+/* Centred page column. */
+.vo-container {
+    width: 100%;
+    max-width: var(--vo-container-max, 68rem);
+    margin-inline: auto;
+    padding-inline: var(--vo-container-gutter, 1.25rem);
+}
+
+/* A major section of the page. */
+.vo-section {
+    margin-block: var(--vo-space-6, 3.5rem);
+}
+
+/* Vertical stack with consistent gaps — the workhorse spacer.
+   .vo-stack--tight and --loose adjust without new classes. */
+.vo-stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--vo-stack-gap, 1rem);
+}
+
+.vo-stack--tight { --vo-stack-gap: var(--vo-space-2, 0.6rem); }
+.vo-stack--loose { --vo-stack-gap: var(--vo-space-5, 2.25rem); }
+
+/* Responsive equal-width columns with no media query.
+   min() keeps a single narrow column from overflowing the viewport. */
+.vo-grid {
+    display: grid;
+    gap: var(--vo-space-4, 1.5rem);
+    grid-template-columns: repeat(auto-fit, minmax(min(var(--vo-grid-min, 16rem), 100%), 1fr));
+    align-items: start;
+}
+
+/* Tighter minimum so three columns survive to a narrower viewport. */
+.vo-grid--3up { --vo-grid-min: 13.5rem; }
+
+/* Grid and flex items default to min-width:auto, so a track cannot shrink
+   below its content's min-content width and the row overflows. Reset it. */
+.vo-grid > *,
+.vo-split > *,
+.vo-panel__body > * { min-width: 0; }
+
+/* Two columns of unequal weight, collapsing to one when narrow. */
+.vo-split {
+    display: grid;
+    gap: var(--vo-space-4, 1.5rem);
+    grid-template-columns: 1fr;
+    align-items: start;
+}
+
+@media (min-width: 900px) {
+    .vo-split {
+        grid-template-columns: var(--vo-split-ratio, 1fr 1fr);
+    }
+    .vo-split--wide-right { --vo-split-ratio: 1fr 1.45fr; }
+    .vo-split--wide-left  { --vo-split-ratio: 1.45fr 1fr; }
+}
+
+/* ============================================================
+   HEADINGS AND PROSE
+   Deliberately light touch: inherits the host project's font.
+   ============================================================ */
+
+.vo-section-title {
+    margin: 0 0 var(--vo-space-3, 1rem);
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--vo-ink, #1b1b1b);
+}
+
+.vo-subhead {
+    margin: 0 0 var(--vo-space-2, 0.6rem);
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--vo-ink, #1b1b1b);
+}
+
+.vo-eyebrow {
+    margin: 0 0 var(--vo-space-1, 0.35rem);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--vo-ink-soft, #55565a);
+}
+
+.vo-prose {
+    margin: 0;
+    font-size: var(--vo-text-size, 0.8125rem);
+    font-weight: 400;
+    line-height: var(--vo-line-height, 1.6);
+    color: var(--vo-ink, #1b1b1b);
+}
+
+.vo-prose + .vo-prose { margin-top: var(--vo-space-3, 1rem); }
+
+/* Inside a gap-based container the gap already does this job. */
+.vo-stack > .vo-prose + .vo-prose,
+.vo-grid > .vo-prose + .vo-prose,
+.vo-split > .vo-prose + .vo-prose { margin-top: 0; }
+
+/* Numbered / bulleted lists that match .vo-prose sizing. */
+.vo-list {
+    margin: 0;
+    padding-left: 1.25rem;
+    font-size: var(--vo-text-size, 0.8125rem);
+    font-weight: 400;
+    line-height: var(--vo-line-height, 1.6);
+    color: var(--vo-ink, #1b1b1b);
+}
+
+.vo-list > li + li { margin-top: var(--vo-space-1, 0.35rem); }
+
+/* Label/value pairs — credits, metadata, specs. */
+.vo-meta {
+    margin: 0;
+    font-size: var(--vo-text-size, 0.8125rem);
+    font-weight: 400;
+    line-height: var(--vo-line-height, 1.6);
+    color: var(--vo-ink, #1b1b1b);
+}
+
+.vo-meta__row { display: block; }
+.vo-meta__key { font-weight: 600; }
+.vo-meta__key::after { content: ": "; }
+
+/* ============================================================
+   CALLOUT
+   One component, recoloured by variant. Each variant sets only
+   three custom properties, so adding a colour is three lines.
+   ============================================================ */
+
+.vo-callout {
+    /* Neutral by default so an unmodified .vo-callout still reads. */
+    --vo-callout-bg: var(--vo-neutral-bg, #f4f4f2);
+    --vo-callout-border: var(--vo-neutral-border, #d5d5d0);
+    --vo-callout-accent: var(--vo-neutral-accent, #4a4a48);
+
+    display: flex;
+    flex-direction: column;
+    gap: var(--vo-space-3, 1rem);
+    height: 100%;
+    padding: var(--vo-space-4, 1.5rem);
+    background: var(--vo-callout-bg);
+    border: var(--vo-border-width, 1px) solid var(--vo-callout-border);
+    border-radius: var(--vo-radius, 6px);
+}
+
+.vo-callout--pink {
+    --vo-callout-bg: var(--vo-pink-bg, #fce8ee);
+    --vo-callout-border: var(--vo-pink-border, #e9aac0);
+    --vo-callout-accent: var(--vo-pink-accent, #b34a6d);
+}
+
+.vo-callout--blue {
+    --vo-callout-bg: var(--vo-blue-bg, #e3edf8);
+    --vo-callout-border: var(--vo-blue-border, #9fbfdf);
+    --vo-callout-accent: var(--vo-blue-accent, #2f5f92);
+}
+
+.vo-callout--amber {
+    --vo-callout-bg: var(--vo-amber-bg, #fdf3d4);
+    --vo-callout-border: var(--vo-amber-border, #e8c86a);
+    --vo-callout-accent: var(--vo-amber-accent, #8a6a15);
+}
+
+.vo-callout__title {
+    margin: 0;
+    font-size: 0.85rem;
+    font-weight: 600;
+    line-height: 1.35;
+    color: var(--vo-callout-accent);
+}
+
+.vo-callout__body {
+    margin: 0;
+    font-size: var(--vo-text-size, 0.8125rem);
+    font-weight: 400;
+    line-height: var(--vo-line-height, 1.6);
+    color: var(--vo-ink, #1b1b1b);
+}
+
+.vo-callout__list {
+    margin: 0;
+    padding-left: 1.1rem;
+    font-size: var(--vo-text-size, 0.8125rem);
+    font-weight: 400;
+    line-height: var(--vo-line-height, 1.6);
+    color: var(--vo-ink, #1b1b1b);
+}
+
+.vo-callout__list > li + li { margin-top: var(--vo-space-1, 0.35rem); }
+
+/* A divided-off block at the foot of the callout, e.g. "Goals". */
+.vo-callout__subhead {
+    margin: 0 0 var(--vo-space-1, 0.35rem);
+    padding-top: var(--vo-space-3, 1rem);
+    border-top: var(--vo-border-width, 1px) solid var(--vo-callout-border);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--vo-callout-accent);
+}
+
+/* Push the closing block to the bottom so callouts in a row align. */
+.vo-callout__foot { margin-top: auto; }
+
+/* ============================================================
+   TABLE
+   Real <table> markup for semantics and screen readers. Always
+   wrap in .vo-table-scroll so a wide table scrolls itself rather
+   than forcing the whole page sideways.
+   ============================================================ */
+
+.vo-table-scroll {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.vo-table {
+    width: 100%;
+    /* min() lets the table shrink below its preferred minimum rather than
+       widening the page on a phone. Raise --vo-table-min for a table with
+       many columns, where horizontal scrolling really is the better answer. */
+    min-width: min(var(--vo-table-min, 30rem), 100%);
+    border-collapse: collapse;
+    font-size: var(--vo-text-size, 0.8125rem);
+    line-height: var(--vo-line-height, 1.6);
+    text-align: left;
+}
+
+.vo-table thead th {
+    padding: var(--vo-space-2, 0.6rem) var(--vo-space-3, 1rem);
+    background: var(--vo-table-head-bg, #dcd8cd);
+    color: var(--vo-table-head-ink, #23231f);
+    font-weight: 600;
+    vertical-align: middle;
+}
+
+.vo-table tbody td {
+    padding: var(--vo-space-2, 0.6rem) var(--vo-space-3, 1rem);
+    background: var(--vo-table-cell-bg, #ffffff);
+    border-top: var(--vo-border-width, 1px) solid var(--vo-rule, #dcdcdc);
+    font-weight: 400;
+    color: var(--vo-ink, #1b1b1b);
+    vertical-align: top;
+}
+
+.vo-table tbody tr:nth-child(odd) td {
+    background: var(--vo-table-zebra, #f6f5f1);
+}
+
+/* First column reads as a row label. */
+.vo-table tbody th[scope="row"] {
+    padding: var(--vo-space-2, 0.6rem) var(--vo-space-3, 1rem);
+    border-top: var(--vo-border-width, 1px) solid var(--vo-rule, #dcdcdc);
+    background: var(--vo-table-cell-bg, #ffffff);
+    font-weight: 600;
+    text-align: left;
+    vertical-align: top;
+    color: var(--vo-ink, #1b1b1b);
+}
+
+.vo-table tbody tr:nth-child(odd) th[scope="row"] {
+    background: var(--vo-table-zebra, #f6f5f1);
+}
+
+/* Green variant — recolours header and zebra only. */
+.vo-table--green thead th {
+    background: var(--vo-table-green-head-bg, #9cc0a5);
+    color: var(--vo-table-green-head-ink, #16291c);
+}
+
+.vo-table--green tbody tr:nth-child(odd) td,
+.vo-table--green tbody tr:nth-child(odd) th[scope="row"] {
+    background: var(--vo-table-green-zebra, #edf4ee);
+}
+
+/* ============================================================
+   PANEL + CARD
+   A tinted band grouping commentary with supporting imagery.
+   ============================================================ */
+
+.vo-panel {
+    padding: var(--vo-space-5, 2.25rem);
+    background: var(--vo-panel-bg, #fdf9e6);
+    border-radius: var(--vo-radius-lg, 10px);
+}
+
+.vo-panel__title {
+    margin: 0 0 var(--vo-space-4, 1.5rem);
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--vo-ink, #1b1b1b);
+}
+
+/* Cards beside figure. Stacks to one column below 900px. */
+.vo-panel__body {
+    display: grid;
+    gap: var(--vo-space-4, 1.5rem);
+    grid-template-columns: 1fr;
+    align-items: start;
+}
+
+@media (min-width: 900px) {
+    .vo-panel__body:not(.vo-panel__body--stack) {
+        grid-template-columns: var(--vo-panel-split, 1fr 1.35fr);
+    }
+}
+
+/* Figure above, cards below — for a full-width row of images. */
+.vo-panel__body--stack { grid-template-columns: 1fr; }
+
+.vo-card {
+    padding: var(--vo-space-3, 1rem) var(--vo-space-4, 1.5rem);
+    background: var(--vo-card-bg, #f9eec0);
+    border: var(--vo-border-width, 1px) solid var(--vo-card-border, #e8d79a);
+    border-radius: var(--vo-radius, 6px);
+}
+
+.vo-card__title {
+    margin: 0 0 var(--vo-space-1, 0.35rem);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--vo-ink, #1b1b1b);
+}
+
+.vo-card__body {
+    margin: 0;
+    font-size: var(--vo-text-size, 0.8125rem);
+    font-weight: 400;
+    line-height: var(--vo-line-height, 1.6);
+    color: var(--vo-ink, #1b1b1b);
+}
+
+.vo-card__list {
+    margin: 0;
+    padding-left: 1.1rem;
+    font-size: var(--vo-text-size, 0.8125rem);
+    font-weight: 400;
+    line-height: var(--vo-line-height, 1.6);
+}
+
+/* ============================================================
+   FIGURE / IMAGE SLOT
+   aspect-ratio holds the space so placeholders keep the real
+   proportions before final imagery arrives.
+   ============================================================ */
+
+.vo-figure {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--vo-space-2, 0.6rem);
+}
+
+.vo-figure img {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+    border-radius: var(--vo-radius, 6px);
+}
+
+/* A row of images that wraps instead of squashing. */
+.vo-figure--row {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: var(--vo-space-3, 1rem);
+}
+
+.vo-figure--row > * {
+    flex: 1 1 var(--vo-figure-min, 12rem);
+    min-width: 0;
+}
+
+.vo-figure__caption {
+    font-size: 0.72rem;
+    font-weight: 400;
+    color: var(--vo-ink-soft, #55565a);
+}
+
+/* Image-free placeholder — keeps layout honest with no binary. */
+.vo-image-slot {
+    width: 100%;
+    aspect-ratio: var(--vo-slot-ratio, 16 / 10);
+    background: var(--vo-slot-bg, #e9e9e6);
+    border-radius: var(--vo-radius, 6px);
+}
+
+/* ============================================================
+   TREE — before/after information architecture diagrams
+   Pure CSS connectors via ::before / ::after. No SVG, no images.
+   ============================================================ */
+
+.vo-tree {
+    --vo-tree-drop: 1.15rem;
+    font-size: var(--vo-text-size, 0.8125rem);
+    line-height: 1.4;
+    text-align: center;
+}
+
+.vo-tree__root { display: flex; justify-content: center; }
+
+/* Children row. The ::before is the stem descending from the parent. */
+.vo-tree__children {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    margin: 0;
+    padding: var(--vo-tree-drop) 0 0;
+    list-style: none;
+}
+
+.vo-tree__children::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 0;
+    height: var(--vo-tree-drop);
+    border-left: var(--vo-border-width, 1px) solid var(--vo-tree-line, #9a9a96);
+}
+
+.vo-tree__children > li {
+    position: relative;
+    display: flex;
+    flex: 1 1 0;
+    min-width: 0;
+    /* Horizontal padding, not gap: the connector rules span the whole li,
+       so they stay continuous from one sibling to the next. */
+    padding: var(--vo-tree-drop) var(--vo-tree-gutter, 0.3rem) 0;
+}
+
+/* Nodes in a row share a height. */
+.vo-tree__children > li > .vo-node { flex: 1 1 auto; }
+
+/* Two half-width rules meeting over each child form the horizontal
+   bar; ::after also carries the vertical drop into the node. */
+.vo-tree__children > li::before,
+.vo-tree__children > li::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    width: 50%;
+    height: var(--vo-tree-drop);
+    border-top: var(--vo-border-width, 1px) solid var(--vo-tree-line, #9a9a96);
+}
+
+.vo-tree__children > li::before { right: 50%; }
+
+.vo-tree__children > li::after {
+    left: 50%;
+    border-left: var(--vo-border-width, 1px) solid var(--vo-tree-line, #9a9a96);
+}
+
+/* Trim the overhanging halves at each end of the row. */
+.vo-tree__children > li:first-child::before { border-top: 0 none; }
+.vo-tree__children > li:last-child::after { border-top: 0 none; }
+
+/* A lone child needs only the straight stem. */
+.vo-tree__children > li:only-child::before { display: none; }
+.vo-tree__children > li:only-child::after { left: 50%; border-top: 0 none; }
+
+/* Stacked variant: children listed vertically down one side. */
+.vo-tree__children--stack {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--vo-space-2, 0.6rem);
+}
+
+.vo-tree__children--stack {
+    gap: var(--vo-space-2, 0.6rem);
+}
+
+.vo-tree__children--stack > li { padding-top: 0; }
+
+.vo-tree__children--stack > li::before,
+.vo-tree__children--stack > li::after { display: none; }
+
+.vo-node {
+    display: block;
+    padding: var(--vo-space-2, 0.6rem) var(--vo-space-2, 0.6rem);
+    background: var(--vo-tree-node-bg, #ffffff);
+    border: var(--vo-border-width, 1px) solid var(--vo-tree-node-border, #8d8d88);
+    border-radius: var(--vo-radius, 6px);
+    font-weight: 500;
+    overflow-wrap: break-word;
+}
+
+/* Highlighted node — marks what changed between before and after. */
+.vo-node--accent {
+    background: var(--vo-tree-node-accent-bg, #cfe0f1);
+    border-color: var(--vo-tree-node-accent-border, #5f8fbf);
+}
+
+.vo-node__sub {
+    display: block;
+    margin-top: 0.2rem;
+    font-size: 0.68rem;
+    font-weight: 400;
+    color: var(--vo-ink-soft, #55565a);
+}
+
+/* Label above a diagram, e.g. "Before" / "After". */
+.vo-tree__label {
+    margin: 0 0 var(--vo-space-3, 1rem);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--vo-ink-soft, #55565a);
+    text-align: center;
+}
+
+/* ------------------------------------------------------------
+   TREE — narrow viewports
+   A horizontal row of nodes becomes unreadable on a phone, so the
+   children stack and each keeps a short connector above it.
+   ------------------------------------------------------------ */
+@media (max-width: 899px) {
+    .vo-tree__children:not(.vo-tree__children--stack) {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .vo-tree__children:not(.vo-tree__children--stack) > li::before {
+        display: none;
+    }
+
+    .vo-tree__children:not(.vo-tree__children--stack) > li::after {
+        left: 50%;
+        right: auto;
+        border-top: 0 none;
+    }
+}
