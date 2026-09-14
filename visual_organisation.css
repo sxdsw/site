@@ -508,6 +508,15 @@
 
 .vo-tree__root { display: flex; justify-content: center; }
 
+/* No list markers anywhere inside a tree. Browsers give a nested <ul> a
+   `circle` marker by default, so cancel it for every descendant rather than
+   only the two list classes this library happens to ship. */
+.vo-tree ul,
+.vo-tree ol,
+.vo-tree li {
+    list-style: none;
+}
+
 /* Children row. The ::before is the stem descending from the parent. */
 .vo-tree__children {
     position: relative;
