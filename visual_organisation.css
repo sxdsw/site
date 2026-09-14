@@ -576,10 +576,6 @@
     gap: var(--vo-space-2, 0.6rem);
 }
 
-.vo-tree__children--stack {
-    gap: var(--vo-space-2, 0.6rem);
-}
-
 .vo-tree__children--stack > li { padding-top: 0; }
 
 .vo-tree__children--stack > li::before,
