@@ -218,10 +218,60 @@ function setupParentFrameSizing() {
 
     window.addEventListener('resize', resizeFromFrameDocument);
 
+    // Projects unlocked inside pages/work.html are listed in the Work tab. The
+    // key never leaves that frame — these links only ask it to swap entry, so
+    // navigating the frame anywhere else drops them and re-locks the section.
+    const workLinks = document.getElementById('workLinks');
+
+    function clearWorkEntries() {
+        if (!workLinks) {
+            return;
+        }
+        workLinks.querySelectorAll('[data-work-entry]').forEach((el) => el.remove());
+    }
+
+    function showWorkEntries(entries) {
+        if (!workLinks || !Array.isArray(entries)) {
+            return;
+        }
+        clearWorkEntries();
+
+        for (const entry of entries) {
+            if (!entry || typeof entry.file !== 'string' || typeof entry.title !== 'string') {
+                continue;
+            }
+            const row = document.createElement('div');
+            row.className = 'expandDetails';
+            row.dataset.workEntry = '';
+
+            const link = document.createElement('a');
+            link.className = 'linkPage';
+            link.href = '#';
+            link.textContent = entry.title;
+            link.addEventListener('click', (event) => {
+                event.preventDefault();
+                for (const other of workLinks.querySelectorAll('[data-work-entry] a')) {
+                    other.setAttribute('aria-current', String(other === link));
+                }
+                frame.contentWindow.postMessage({ type: 'work-show', file: entry.file }, '*');
+            });
+
+            row.append(link);
+            workLinks.append(row);
+        }
+
+        const first = workLinks.querySelector('[data-work-entry] a');
+        if (first) {
+            first.setAttribute('aria-current', 'true');
+        }
+        workLinks.closest('details')?.setAttribute('open', '');
+    }
+
     document.querySelectorAll('a[target="myFrame"]').forEach((link) => {
         link.addEventListener('click', (event) => {
             event.preventDefault();
             isFrameNavigating = true;
+            clearWorkEntries();
             clearFrameMeasurements();
             disconnectFrameObservers();
             frame.style.height = '0px';
@@ -243,6 +293,11 @@ function setupParentFrameSizing() {
             const deltaX = Number(event.data.deltaX) || 0;
             const deltaY = Number(event.data.deltaY) || 0;
             window.scrollBy({ left: deltaX, top: deltaY, behavior: 'auto' });
+            return;
+        }
+
+        if (event.data && event.data.type === 'work-entries') {
+            showWorkEntries(event.data.entries);
         }
     });
 

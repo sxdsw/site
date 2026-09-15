@@ -53,17 +53,25 @@
     --vo-blue-border: #9fbfdf;
     --vo-blue-accent: #2f5f92;
 
-    --vo-amber-bg: #fdf3d4;
-    --vo-amber-border: #e8c86a;
-    --vo-amber-accent: #8a6a15;
+    --vo-amber-bg: #fbde80;
+    --vo-amber-border: #fcfbf8;
+    --vo-amber-accent: #1a1402;
 
-    --vo-green-bg: #e6f1e8;
+    --vo-ochre-bg: #eeb71f;
+    --vo-ochre-border: #e8c86a;
+    --vo-ochre-accent: #281f07;
+
+    --vo-green-bg: #cdedd6;
     --vo-green-border: #a9c9b2;
     --vo-green-accent: #3d6b4a;
 
     --vo-neutral-bg: #f4f4f2;
     --vo-neutral-border: #d5d5d0;
     --vo-neutral-accent: #4a4a48;
+
+    --vo-purple-bg: #eae7fb;
+    --vo-purple-border: #f1f0fa;
+    --vo-purple-accent: #4a4a6d;
 
     /* Tables */
     --vo-table-head-bg: #dcd8cd;
@@ -73,10 +81,21 @@
 
     --vo-table-green-head-bg: #9cc0a5;
     --vo-table-green-head-ink: #16291c;
+    --vo-table-green-cell-bg: #ffffff;
     --vo-table-green-zebra: #edf4ee;
 
+    --vo-table-blue-head-bg: #d0ecfe;
+    --vo-table-blue-head-ink: #1b2f3d;
+    --vo-table-blue-cell-bg: #c8f1ff;
+    --vo-table-blue-zebra: #e4ffff;
+
+    --vo-table-yellow-head-bg: #ffdda1;
+    --vo-table-yellow-head-ink: #151109;
+    --vo-table-yellow-cell-bg: #ffffff;
+    --vo-table-yellow-zebra: #fff9e6;
+
     /* Panels and cards */
-    --vo-panel-bg: #fdf9e6;
+    --vo-panel-bg: #faf8ee;
     --vo-card-bg: #f9eec0;
     --vo-card-border: #e8d79a;
 
@@ -223,6 +242,7 @@
 /* Label/value pairs — credits, metadata, specs. */
 .vo-meta {
     margin: 0;
+    margin-top: var(--vo-space-2, 0.6rem);
     font-size: var(--vo-text-size, 0.8125rem);
     font-weight: 400;
     line-height: var(--vo-line-height, 1.6);
@@ -271,6 +291,13 @@
     --vo-callout-bg: var(--vo-amber-bg, #fdf3d4);
     --vo-callout-border: var(--vo-amber-border, #e8c86a);
     --vo-callout-accent: var(--vo-amber-accent, #8a6a15);
+}
+
+.vo-callout--ochre {
+    --vo-callout-bg: var(--vo-ochre-bg, #efdca3);
+    --vo-callout-border: var(--vo-ochre-border, #e8c86a);
+    --vo-callout-accent: var(--vo-ochre-accent, #eee2bf);
+    
 }
 
 .vo-callout--green {
@@ -330,6 +357,7 @@
     width: 100%;
     max-width: 100%;
     overflow-x: auto;
+    border-radius: var(--vo-radius, 6px);
     -webkit-overflow-scrolling: touch;
 }
 
@@ -356,7 +384,7 @@
 .vo-table tbody td {
     padding: var(--vo-space-2, 0.6rem) var(--vo-space-3, 1rem);
     background: var(--vo-table-cell-bg, #ffffff);
-    border-top: var(--vo-border-width, 1px) solid var(--vo-rule, #dcdcdc);
+    /* border-top: var(--vo-border-width, 1px) solid var(--vo-rule, #dcdcdc); */
     font-weight: 400;
     color: var(--vo-ink, #1b1b1b);
     vertical-align: top;
@@ -369,27 +397,46 @@
 /* First column reads as a row label. */
 .vo-table tbody th[scope="row"] {
     padding: var(--vo-space-2, 0.6rem) var(--vo-space-3, 1rem);
-    border-top: var(--vo-border-width, 1px) solid var(--vo-rule, #dcdcdc);
-    background: var(--vo-table-cell-bg, #ffffff);
+    background-color: var(--vo-table-cell-bg, #ffffff);
+    background-image: linear-gradient(var(--vo-table-label-tint, rgba(101, 100, 100, 0.055)),
+                                      var(--vo-table-label-tint, rgba(190, 179, 179, 0.055)));
     font-weight: 600;
     text-align: left;
     vertical-align: top;
     color: var(--vo-ink, #1b1b1b);
 }
-
 .vo-table tbody tr:nth-child(odd) th[scope="row"] {
-    background: var(--vo-table-zebra, #f6f5f1);
+    background-color: var(--vo-table-zebra, #f6f5f1);
 }
 
-/* Green variant — recolours header and zebra only. */
-.vo-table--green thead th {
-    background: var(--vo-table-green-head-bg, #9cc0a5);
-    color: var(--vo-table-green-head-ink, #16291c);
+.vo-table__img {
+    display: block;      /* forces its own line under the text */
+    margin-top: 1.5rem;  /* gap between the sentence and the image */
+    margin-inline: auto; /* centres the capped image in the cell */
+    width: 100%;
+    max-width: 18rem;    /* cap so it doesn't widen the column */
+    height: auto;
 }
 
-.vo-table--green tbody tr:nth-child(odd) td,
-.vo-table--green tbody tr:nth-child(odd) th[scope="row"] {
-    background: var(--vo-table-green-zebra, #edf4ee);
+.vo-table--green {
+    --vo-table-head-bg: var(--vo-table-green-head-bg, #9cc0a5);
+    --vo-table-head-ink: var(--vo-table-green-head-ink, #16291c);
+    --vo-table-cell-bg: var(--vo-table-green-cell-bg, #afdab5);
+    --vo-table-zebra: var(--vo-table-green-zebra, #edf4ee);
+}
+
+.vo-table--blue {
+    --vo-table-head-bg: var(--vo-table-blue-head-bg, #d0ecfe);
+    --vo-table-head-ink: var(--vo-table-blue-head-ink, #1b2f3d);
+    --vo-table-cell-bg: var(--vo-table-blue-cell-bg, #a7d6ed);
+    --vo-table-zebra: var(--vo-table-blue-zebra, #a8f6f6);
+}
+
+.vo-table--yellow {
+    --vo-table-head-bg: var(--vo-table-yellow-head-bg, #ffdda1);
+    --vo-table-head-ink: var(--vo-table-yellow-head-ink, #151109);
+    --vo-table-cell-bg: var(--vo-table-yellow-cell-bg, #ffffff);
+    --vo-table-zebra: var(--vo-table-yellow-zebra, #fff9e6);
 }
 
 /* ============================================================
@@ -402,6 +449,13 @@
     background: var(--vo-panel-bg, #fdf9e6);
     border-radius: var(--vo-radius-lg, 10px);
 }
+
+.vo-panel--purple {
+    padding: var(--vo-space-5, 2.25rem);
+    background: #f5f3fc;
+    border-radius: var(--vo-radius-lg, 10px);
+}
+
 
 .vo-panel__title {
     margin: 0 0 var(--vo-space-4, 1.5rem);
@@ -434,11 +488,21 @@
     border-radius: var(--vo-radius, 6px);
 }
 
+
 .vo-card__title {
     margin: 0 0 var(--vo-space-1, 0.35rem);
     font-size: 0.8rem;
     font-weight: 600;
     color: var(--vo-ink, #1b1b1b);
+}
+
+/* Rule under a card title, same stroke as .vo-callout__subhead. Falls back to
+   the card's own border colour, since --vo-callout-border is callout-scoped. */
+.vo-card__title--ruled {
+    padding-bottom: var(--vo-space-2, 0.6rem);
+    margin-bottom: var(--vo-space-2, 0.6rem);
+    border-bottom: var(--vo-border-width, 1px) solid
+        var(--vo-callout-border, var(--vo-card-border, #e8d79a));
 }
 
 .vo-card__body {
@@ -475,7 +539,7 @@
     width: 100%;
     height: auto;
     max-width: 100%;
-    border-radius: var(--vo-radius, 6px);
+    /* border-radius: var(--vo-radius, 6px); */
 }
 
 /* A row of images that wraps instead of squashing. */
@@ -625,7 +689,12 @@
 /* Highlighted node — marks what changed between before and after. */
 .vo-node--accent {
     background: var(--vo-tree-node-accent-bg, #cfe0f1);
-    border-color: var(--vo-tree-node-accent-border, #5f8fbf);
+    border-color: var(--vo-tree-node-accent-border, #6cadee);
+}
+
+.vo-node-blue {
+    background:#aac7ff;
+    border-color: #9fbfdf;
 }
 
 .vo-node__sub {
