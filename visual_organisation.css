@@ -53,9 +53,13 @@
     --vo-blue-border: #9fbfdf;
     --vo-blue-accent: #2f5f92;
 
-    --vo-amber-bg: #ffdda1;
+    --vo-amber-bg: #fbde80;
     --vo-amber-border: #fcfbf8;
     --vo-amber-accent: #1a1402;
+
+    --vo-ochre-bg: #eeb71f;
+    --vo-ochre-border: #e8c86a;
+    --vo-ochre-accent: #281f07;
 
     --vo-green-bg: #cdedd6;
     --vo-green-border: #a9c9b2;
@@ -289,6 +293,13 @@
     --vo-callout-accent: var(--vo-amber-accent, #8a6a15);
 }
 
+.vo-callout--ochre {
+    --vo-callout-bg: var(--vo-ochre-bg, #efdca3);
+    --vo-callout-border: var(--vo-ochre-border, #e8c86a);
+    --vo-callout-accent: var(--vo-ochre-accent, #eee2bf);
+    
+}
+
 .vo-callout--green {
     --vo-callout-bg: var(--vo-green-bg, #e6f1e8);
     --vo-callout-border: var(--vo-green-border, #a9c9b2);
@@ -485,6 +496,15 @@
     color: var(--vo-ink, #1b1b1b);
 }
 
+/* Rule under a card title, same stroke as .vo-callout__subhead. Falls back to
+   the card's own border colour, since --vo-callout-border is callout-scoped. */
+.vo-card__title--ruled {
+    padding-bottom: var(--vo-space-2, 0.6rem);
+    margin-bottom: var(--vo-space-2, 0.6rem);
+    border-bottom: var(--vo-border-width, 1px) solid
+        var(--vo-callout-border, var(--vo-card-border, #e8d79a));
+}
+
 .vo-card__body {
     margin: 0;
     font-size: var(--vo-text-size, 0.8125rem);
@@ -519,7 +539,7 @@
     width: 100%;
     height: auto;
     max-width: 100%;
-    border-radius: var(--vo-radius, 6px);
+    /* border-radius: var(--vo-radius, 6px); */
 }
 
 /* A row of images that wraps instead of squashing. */
