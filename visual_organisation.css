@@ -168,7 +168,9 @@
 .vo-split > *,
 .vo-panel__body > * { min-width: 0; }
 
-/* Two columns of unequal weight, collapsing to one when narrow. */
+/* Two columns of unequal weight, collapsing to one when narrow. The 720px
+   breakpoint is set against the index iframe, which is 28rem short of the
+   window; at 900px these never split on a laptop. */
 .vo-split {
     display: grid;
     gap: var(--vo-space-4, 1.5rem);
@@ -176,7 +178,7 @@
     align-items: start;
 }
 
-@media (min-width: 900px) {
+@media (min-width: 720px) {
     .vo-split {
         grid-template-columns: var(--vo-split-ratio, 1fr 1fr);
     }
@@ -464,7 +466,7 @@
     color: var(--vo-ink, #1b1b1b);
 }
 
-/* Cards beside figure. Stacks to one column below 900px. */
+/* Cards beside figure. Stacks to one column below 720px. */
 .vo-panel__body {
     display: grid;
     gap: var(--vo-space-4, 1.5rem);
@@ -472,7 +474,7 @@
     align-items: start;
 }
 
-@media (min-width: 900px) {
+@media (min-width: 720px) {
     .vo-panel__body:not(.vo-panel__body--stack) {
         grid-template-columns: var(--vo-panel-split, 1fr 1.35fr);
     }
@@ -718,10 +720,10 @@
 
 /* ------------------------------------------------------------
    TREE — narrow viewports
-   A horizontal row of nodes becomes unreadable on a phone, so the
+   A horizontal row of nodes becomes unreadable when narrow, so the
    children stack and each keeps a short connector above it.
    ------------------------------------------------------------ */
-@media (max-width: 899px) {
+@media (max-width: 719px) {
     .vo-tree__children:not(.vo-tree__children--stack) {
         flex-direction: column;
         align-items: stretch;

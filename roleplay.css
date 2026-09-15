@@ -127,8 +127,10 @@
     grid-template-columns: 1fr;
 }
 
-/* Narrow rail of controls beside a wider display area. */
-@media (min-width: 900px) {
+/* Narrow rail of controls beside a wider display area. Breakpoint is 720px,
+   not 900px: inside the index iframe this page only ever sees the frame's
+   width, which is the window minus 28rem. */
+@media (min-width: 720px) {
     .roleplay-board { grid-template-columns: minmax(0, 20rem) minmax(0, 1fr); }
 }
 
