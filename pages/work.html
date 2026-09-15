@@ -19,12 +19,14 @@
         }
         #gateNote { min-height: 1.4em; margin-top: 0.75rem; font-size: 0.85em; }
         #workIndex { margin: 2rem 0; text-align: center; }
+        /* Reads as the site's own nav links, not as form controls. */
         #workIndex button {
-            font: inherit; margin: 0 0.5rem; padding: 0.35rem 1rem;
-            border: 1px solid currentColor; background: transparent;
-            color: inherit; cursor: crosshair;
+            font: inherit; margin: 0 0.75rem; padding: 0;
+            border: 0; background: transparent;
+            color: inherit; cursor: crosshair; opacity: 0.55;
         }
-        #workIndex button[aria-current="true"] { text-decoration: underline; }
+        #workIndex button:hover { opacity: 1; }
+        #workIndex button[aria-current="true"] { opacity: 1; text-decoration: underline; }
         [hidden] { display: none !important; }
     </style>
 </head>
@@ -32,8 +34,8 @@
     <form id="gate">
         <p>This section is private.</p>
         <input id="pass" type="password" autocomplete="current-password"
-               placeholder="passphrase" aria-label="passphrase" required>
-        <button type="submit">Unlock</button>
+               placeholder="password" aria-label="password" required>
+        <button type="submit">Enter</button>
         <p id="gateNote" role="status"></p>
     </form>
 
@@ -46,12 +48,13 @@
         let key = null;
         let meta = null;
         const blobUrls = [];
+        const framed = window.parent !== window;
 
         const b64ToBytes = (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
 
-        async function deriveKey(passphrase, salt, iterations) {
+        async function deriveKey(password, salt, iterations) {
             const base = await crypto.subtle.importKey(
-                'raw', new TextEncoder().encode(passphrase), 'PBKDF2', false, ['deriveKey']);
+                'raw', new TextEncoder().encode(password), 'PBKDF2', false, ['deriveKey']);
             return crypto.subtle.deriveKey(
                 { name: 'PBKDF2', salt, iterations, hash: 'SHA-256' },
                 base, { name: 'AES-GCM', length: 256 }, false, ['decrypt']);
@@ -101,8 +104,31 @@
             const html = new TextDecoder().decode(await open(await fetchSealed(`work/${file}.enc`)));
             // Parse detached so nothing runs, then move the nodes across.
             const parsed = new DOMParser().parseFromString(html, 'text/html');
+
+            // Adopt the entry's own stylesheets. nala.css and roleplay.css both
+            // redefine --vo-ink and --vo-text-size, so only one may be live at a
+            // time — swapping here keeps them from overriding each other.
+            for (const old of document.querySelectorAll('link[data-entry-css]')) old.remove();
+            for (const link of parsed.querySelectorAll('link[rel="stylesheet"]')) {
+                const href = link.getAttribute('href');
+                if (!href?.startsWith('../')) continue;
+                const el = document.createElement('link');
+                el.rel = 'stylesheet';
+                el.href = href;
+                el.dataset.entryCss = '';
+                document.head.append(el);
+            }
+
+            // Carry over the page's body class (.nala-page, .roleplay-page),
+            // keeping the one app.js adds when we are inside the index iframe.
+            const frameClass = document.body.classList.contains('iframe-page') ? ['iframe-page'] : [];
+            document.body.className = [...frameClass, ...parsed.body.classList].join(' ');
+
             for (const img of parsed.querySelectorAll('img[src]')) {
-                img.dataset.encSrc = img.getAttribute('src');
+                const src = img.getAttribute('src');
+                // ../ and absolute srcs are public site assets, not sealed ones.
+                if (!src || src.startsWith('../') || /^([a-z]+:|\/)/i.test(src)) continue;
+                img.dataset.encSrc = src;
                 img.removeAttribute('src');
             }
             const content = document.getElementById('workContent');
@@ -114,8 +140,24 @@
             ev.preventDefault();
             const input = document.getElementById('pass');
             note.textContent = 'Checking…';
+            // Loading the sealed data and checking the password fail for very
+            // different reasons, so keep them apart — a missing build reported
+            // as "wrong password" sends you hunting for the wrong problem.
             try {
-                meta ??= await (await fetch('work/meta.json', { cache: 'no-store' })).json();
+                if (!meta) {
+                    const res = await fetch('work/meta.json', { cache: 'no-store' });
+                    if (!res.ok) throw new Error(`work/meta.json: HTTP ${res.status}`);
+                    meta = await res.json();
+                }
+            } catch (err) {
+                console.error(err);
+                note.textContent = location.protocol === 'file:'
+                    ? 'Open this over a web server, not as a local file.'
+                    : 'Sealed content missing — run tools/encrypt.mjs, then push pages/work/.';
+                return;
+            }
+
+            try {
                 key = await deriveKey(
                     input.value, b64ToBytes(meta.kdf.salt), meta.kdf.iterations || ITER_FALLBACK);
                 // Verify against a known plaintext before rendering anything.
@@ -123,7 +165,7 @@
                 if (probe !== 'unlocked') throw new Error('check value mismatch');
             } catch {
                 key = null;
-                note.textContent = 'Wrong passphrase.';
+                note.textContent = 'Wrong password.';
                 input.select();
                 return;
             }
@@ -138,9 +180,24 @@
                 b.addEventListener('click', () => showEntry(entry.file, b));
                 return b;
             }));
-            nav.hidden = false;
+            // Inside the index iframe the sidebar's Work tab lists the entries,
+            // so the in-page row would just duplicate it. Standalone, it is the
+            // only way to switch, so it stays.
+            nav.hidden = framed;
+            if (framed) {
+                parent.postMessage({ type: 'work-entries', entries: meta.entries }, '*');
+            }
+
             const first = nav.querySelector('button');
             if (first) showEntry(meta.entries[0].file, first);
+        });
+
+        // The sidebar links ask for an entry; the key stays in this frame.
+        addEventListener('message', (ev) => {
+            if (ev.source !== parent || !key) return;
+            if (!ev.data || ev.data.type !== 'work-show') return;
+            const i = meta.entries.findIndex((e) => e.file === ev.data.file);
+            if (i >= 0) showEntry(meta.entries[i].file, document.querySelectorAll('#workIndex button')[i]);
         });
 
         addEventListener('pagehide', () => {

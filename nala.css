@@ -84,13 +84,6 @@
     color: var(--nala-ink);
 }
 
-/* Section number + rule, used to open each major section. */
-.nala-rule {
-    margin: 0 0 var(--nala-space-4);
-    border: 0;
-    border-top: 1px solid var(--nala-rule);
-}
-
 /* ============================================================
    3. TYPOGRAPHY SPECIMENS
    ============================================================ */

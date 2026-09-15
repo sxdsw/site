@@ -1,0 +1,450 @@
+/* ============================================================
+   roleplay.css
+   Design system for the AI Role-Play for Pre-Service Teachers
+   project.
+
+   Two halves, mirroring nala.css:
+     1. TOKENS     — the system itself, as custom properties.
+     2. COMPONENTS — working UI built from those tokens, which is
+                     also what the design-system board displays.
+
+   The board's swatches and specimens read from the same tokens the
+   components use, so the documentation cannot drift from the system.
+
+   Load order on the page:
+       style.css  ->  visual_organisation.css  ->  roleplay.css
+   This file is last so it can retheme the vo- library's tokens.
+   ============================================================ */
+
+/* ============================================================
+   1. TOKENS
+   Every value here is measured from media/000.png, the project's
+   design system board. None of it is estimated.
+   ============================================================ */
+
+:root {
+    /* ---- Surfaces ---- */
+    --roleplay-board:   #fbf8fe;   /* board ground, 56% of the reference */
+    --roleplay-surface: #ffffff;   /* cards, nav bar, table rows */
+
+    /* ---- Text ---- */
+    --roleplay-ink:       #221f1f; /* buttons, headings, body */
+    --roleplay-ink-muted: #757274; /* nav links, captions */
+
+    /* ---- Palette: the four swatches, left to right ---- */
+    --roleplay-blue:      #97bffa; /* primary fill, borders, outlines */
+    --roleplay-tint:      #f0f7fc; /* swatch 2, shown in a selected state */
+    --roleplay-peach:     #fbe7bd; /* swatch 3, specialised button */
+    --roleplay-pale-blue: #d9eaf6; /* swatch 4, table header */
+
+    /* ---- Component-specific, all measured ---- */
+    --roleplay-field-fill:     #e8f1f4;
+    --roleplay-gradient-top:   #e5f1f8;
+    --roleplay-gradient-bottom:#fdfefe;
+    --roleplay-divider:        #363636;
+    --roleplay-track:          #d2d2d2;
+    --roleplay-handle:         #a9a9a9;
+
+    /* ---- Type ---- */
+    --roleplay-font: Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --roleplay-size-body:    0.8125rem;
+    --roleplay-size-label:   0.75rem;
+    --roleplay-size-caption: 0.68rem;
+    --roleplay-weight-regular: 400;
+    --roleplay-weight-medium:  500;
+    --roleplay-weight-bold:    700;
+
+    /* ---- Shape: the board draws 2px strokes, measured at the
+           secondary button edge (blue at x=98-99, white from x=100) ---- */
+    --roleplay-radius: 8px;
+    --roleplay-radius-pill: 999px;
+    --roleplay-border-width: 2px;
+    --roleplay-control-height: 2.4rem;
+
+    /* ---- Spacing ---- */
+    --roleplay-space-1: 0.35rem;
+    --roleplay-space-2: 0.6rem;
+    --roleplay-space-3: 1rem;
+    --roleplay-space-4: 1.5rem;
+    --roleplay-space-5: 2.25rem;
+}
+
+/* ---- Minimal library integration ----
+   Only what the page's prose needs. The board defines product UI, not
+   the editorial blocks, so the vo- callouts and tables keep their own
+   styling and the rest of the page is unaffected. */
+:root {
+    --vo-ink: var(--roleplay-ink);
+    --vo-text-size: var(--roleplay-size-body);
+}
+
+/* ============================================================
+   2. PAGE CHROME
+   ============================================================ */
+
+.roleplay-page {
+    color: var(--roleplay-ink);
+}
+
+/* style.css positions #Year and #Medium absolutely at >=900px and
+   indents them by 5vw, which suits the site's full-bleed project
+   pages. This page uses a centred container instead, so the masthead
+   becomes their containing block and the 5vw indent is neutralised.
+   Font sizes and weights still come from style.css. */
+.roleplay-masthead {
+    position: relative;
+    min-height: 5.5rem;
+    margin-bottom: var(--roleplay-space-4);
+}
+
+.roleplay-masthead #TitleName,
+.roleplay-masthead #Year,
+.roleplay-masthead #Medium {
+    margin-left: 0;
+}
+
+.roleplay-masthead #TitleName { margin-top: 0; }
+
+@media (min-width: 900px) {
+    .roleplay-masthead #Medium { margin-top: -0.3125rem; }
+    .roleplay-masthead #Year { margin-top: 20px; }
+}
+
+/* ============================================================
+   3. DESIGN SYSTEM BOARD
+   The components media/000.png specifies, in the order it shows them.
+   ============================================================ */
+
+/* The board sits on its own ground, distinct from the page. */
+.roleplay-board {
+    display: grid;
+    gap: var(--roleplay-space-5);
+    padding: var(--roleplay-space-5);
+    background: var(--roleplay-board);
+    border-radius: var(--roleplay-radius);
+    font-family: var(--roleplay-font);
+    color: var(--roleplay-ink);
+    grid-template-columns: 1fr;
+}
+
+/* Narrow rail of controls beside a wider display area. */
+@media (min-width: 900px) {
+    .roleplay-board { grid-template-columns: minmax(0, 20rem) minmax(0, 1fr); }
+}
+
+.roleplay-board__col {
+    display: flex;
+    flex-direction: column;
+    gap: var(--roleplay-space-5);
+    min-width: 0;
+}
+
+.roleplay-group { display: flex; flex-direction: column; gap: var(--roleplay-space-2); min-width: 0; }
+
+.roleplay-group__title {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: var(--roleplay-weight-bold);
+    color: var(--roleplay-ink);
+}
+
+.roleplay-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: var(--roleplay-space-4);
+}
+
+.roleplay-row--tight { gap: var(--roleplay-space-2); }
+
+/* ---- Typography specimens ---- */
+.roleplay-type { display: flex; flex-direction: column; gap: var(--roleplay-space-1); min-width: 0; }
+.roleplay-type__name { font-size: var(--roleplay-size-label); font-weight: var(--roleplay-weight-bold); }
+.roleplay-type__glyphs {
+    font-size: var(--roleplay-size-caption);
+    line-height: 1.9;
+    letter-spacing: 0.12em;
+    overflow-wrap: anywhere;
+}
+.roleplay-type--bold .roleplay-type__glyphs { font-weight: var(--roleplay-weight-bold); }
+
+/* ---- Colour palette ---- */
+.roleplay-swatches {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: var(--roleplay-space-3);
+}
+
+.roleplay-swatch {
+    flex: 1 1 0;
+    min-width: 0;
+    height: 3.9rem;
+    background: var(--roleplay-swatch-color, var(--roleplay-surface));
+    border: var(--roleplay-border-width) solid transparent;
+    border-radius: var(--roleplay-radius);
+}
+
+/* Swatch 2 on the board carries a dark stroke to show selection. */
+.roleplay-swatch--selected { border-color: var(--roleplay-ink); }
+
+.roleplay-swatch--blue     { --roleplay-swatch-color: var(--roleplay-blue); }
+.roleplay-swatch--tint     { --roleplay-swatch-color: var(--roleplay-tint); }
+.roleplay-swatch--peach    { --roleplay-swatch-color: var(--roleplay-peach); }
+.roleplay-swatch--paleblue { --roleplay-swatch-color: var(--roleplay-pale-blue); }
+
+/* ---- Buttons ---- */
+.roleplay-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: var(--roleplay-control-height);
+    padding: 0 var(--roleplay-space-4);
+    border: var(--roleplay-border-width) solid transparent;
+    border-radius: var(--roleplay-radius);
+    font: inherit;
+    font-size: var(--roleplay-size-label);
+    font-weight: var(--roleplay-weight-bold);
+    color: var(--roleplay-ink);
+    background: none;
+    cursor: pointer;
+}
+
+.roleplay-btn:focus-visible { outline: 2px solid var(--roleplay-ink); outline-offset: 2px; }
+
+.roleplay-btn--primary   { background: var(--roleplay-blue); }
+.roleplay-btn--secondary { background: var(--roleplay-surface); border-color: var(--roleplay-blue); }
+
+.roleplay-btn--tertiary {
+    background: none;
+    border-color: transparent;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+/* ---- Progress indicator: a track with two handles ---- */
+.roleplay-slider {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 1.4rem;
+    width: 100%;
+    max-width: 6.5rem;
+}
+
+.roleplay-slider__track {
+    position: absolute;
+    left: 0.6rem;
+    right: 0.6rem;
+    height: 4px;
+    border-radius: var(--roleplay-radius-pill);
+    background: var(--roleplay-track);
+}
+
+.roleplay-slider__handle {
+    position: relative;
+    width: 1.2rem;
+    height: 1.2rem;
+    border-radius: 50%;
+    background: var(--roleplay-handle);
+}
+
+.roleplay-slider__handle + .roleplay-slider__handle { margin-left: auto; }
+
+/* ---- Specialised button: peach card plus round icon buttons ---- */
+.roleplay-specialised { display: flex; align-items: flex-start; gap: var(--roleplay-space-3); }
+
+.roleplay-persona {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    width: 5.6rem;
+    min-height: 5.8rem;
+    padding: var(--roleplay-space-2);
+    background: var(--roleplay-peach);
+    border-radius: var(--roleplay-radius);
+    font-size: var(--roleplay-size-caption);
+    line-height: 1.4;
+}
+
+.roleplay-persona__caption {
+    display: block;
+    padding: 0.2rem 0.3rem;
+    background: var(--roleplay-surface);
+    font-size: 0.6rem;
+    line-height: 1.35;
+}
+
+.roleplay-icon-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.2rem;
+    height: 2.2rem;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: var(--roleplay-surface);
+    cursor: pointer;
+}
+
+.roleplay-icon-btn__glyph {
+    display: block;
+    width: 1rem;
+    height: 1rem;
+    background: #000000;
+    border-radius: 3px;
+}
+
+.roleplay-icon-btn__glyph--mic {
+    width: 0.6rem;
+    height: 1rem;
+    border-radius: var(--roleplay-radius-pill);
+}
+
+/* ---- Drop down ---- */
+.roleplay-select {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--roleplay-space-2);
+    width: 100%;
+    min-height: var(--roleplay-control-height);
+    padding: 0 var(--roleplay-space-3);
+    background: var(--roleplay-blue);
+    border: var(--roleplay-border-width) solid transparent;
+    border-radius: var(--roleplay-radius);
+    font-size: var(--roleplay-size-label);
+    font-weight: var(--roleplay-weight-bold);
+    color: var(--roleplay-surface);
+}
+
+.roleplay-select__chevron {
+    width: 0.6rem;
+    height: 0.6rem;
+    border-right: 2px solid var(--roleplay-surface);
+    border-bottom: 2px solid var(--roleplay-surface);
+    transform: rotate(45deg) translate(-2px, -2px);
+}
+
+/* ---- Text fields ---- */
+.roleplay-input {
+    width: 100%;
+    min-height: var(--roleplay-control-height);
+    padding: 0 var(--roleplay-space-3);
+    background: var(--roleplay-surface);
+    border: var(--roleplay-border-width) solid var(--roleplay-blue);
+    border-radius: var(--roleplay-radius);
+    font: inherit;
+    font-size: var(--roleplay-size-label);
+    color: var(--roleplay-ink);
+    box-sizing: border-box;
+}
+
+.roleplay-input::placeholder { color: var(--roleplay-ink-muted); }
+.roleplay-input:focus { outline: 2px solid var(--roleplay-ink); outline-offset: 1px; }
+
+/* Filled variant: no stroke, tinted ground, taller. */
+.roleplay-input--filled {
+    min-height: 4rem;
+    padding-top: var(--roleplay-space-2);
+    align-items: flex-start;
+    background: var(--roleplay-field-fill);
+    border-color: transparent;
+}
+
+/* ---- Background gradient panel ---- */
+.roleplay-backdrop {
+    width: 100%;
+    max-width: 11rem;
+    aspect-ratio: 6 / 5;
+    border-radius: var(--roleplay-radius);
+    background: linear-gradient(180deg,
+        var(--roleplay-gradient-top) 0%,
+        var(--roleplay-gradient-bottom) 100%);
+}
+
+/* ---- Cards ---- */
+.roleplay-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--roleplay-space-1);
+    padding: var(--roleplay-space-4);
+    background: var(--roleplay-surface);
+    border-radius: var(--roleplay-radius);
+}
+
+.roleplay-card__head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--roleplay-space-2); }
+.roleplay-card__title { margin: 0; font-size: 1rem; font-weight: var(--roleplay-weight-bold); }
+.roleplay-card__caption { margin: 0; font-size: var(--roleplay-size-label); color: var(--roleplay-ink); }
+
+.roleplay-card__close {
+    border: 0;
+    background: none;
+    font-size: var(--roleplay-size-label);
+    color: var(--roleplay-ink-muted);
+    cursor: pointer;
+    line-height: 1;
+}
+
+.roleplay-card__rule { margin: var(--roleplay-space-2) 0 0; border: 0; border-top: 1px solid var(--roleplay-track); }
+
+/* The empty outlined box shown beneath each card. */
+.roleplay-outline-box {
+    min-height: 4.4rem;
+    border: var(--roleplay-border-width) solid var(--roleplay-blue);
+    border-radius: var(--roleplay-radius);
+}
+
+/* ---- Navigation bar ---- */
+.roleplay-nav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--roleplay-space-2) var(--roleplay-space-4);
+    padding: var(--roleplay-space-2) var(--roleplay-space-4);
+    background: var(--roleplay-surface);
+    border-radius: var(--roleplay-radius);
+    font-size: var(--roleplay-size-label);
+}
+
+.roleplay-nav__brand { font-weight: var(--roleplay-weight-bold); white-space: nowrap; }
+.roleplay-nav__link { color: var(--roleplay-ink-muted); white-space: nowrap; }
+.roleplay-nav__user { display: flex; align-items: center; gap: var(--roleplay-space-1); margin-left: auto; font-weight: var(--roleplay-weight-bold); }
+
+.roleplay-nav__avatar {
+    width: 1.1rem;
+    height: 1.1rem;
+    border-radius: 50%;
+    background: var(--roleplay-ink);
+}
+
+/* ---- History table ---- */
+.roleplay-table-scroll { width: 100%; min-width: 0; overflow-x: auto; }
+
+.roleplay-table {
+    width: 100%;
+    min-width: min(38rem, 100%);
+    border-collapse: collapse;
+    background: var(--roleplay-surface);
+    border-radius: var(--roleplay-radius);
+    overflow: hidden;
+    font-size: var(--roleplay-size-caption);
+    text-align: left;
+}
+
+.roleplay-table thead th {
+    padding: var(--roleplay-space-2) var(--roleplay-space-3);
+    background: var(--roleplay-pale-blue);
+    font-weight: var(--roleplay-weight-medium);
+    color: var(--roleplay-ink);
+    white-space: nowrap;
+}
+
+.roleplay-table tbody td {
+    padding: var(--roleplay-space-3);
+    color: var(--roleplay-ink);
+}
+
+/* The board separates rows with one heavy dark rule. */
+.roleplay-table tbody tr + tr td { border-top: var(--roleplay-border-width) solid var(--roleplay-divider); }

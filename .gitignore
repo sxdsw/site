@@ -9,8 +9,11 @@ documentary_v2.mp4
 # These hold the PLAINTEXT and must never be committed — the site serves the
 # encrypted copies in pages/work/ instead. Rebuild with:
 #   node tools/encrypt.mjs
+#
+# Image directories referenced with a `../` path (medianala/, mediaroleplay/)
+# are deliberately NOT listed here: those paths are public by design, so the
+# files must be committed or the images 404. See tools/README.md.
 work-src/
-medianala/
-mediaroleplay1/
 pages/nala.html
 pages/airoleplay.html
+pages/roleplay.html
