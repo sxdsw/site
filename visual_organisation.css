@@ -387,6 +387,15 @@
     color: var(--vo-table-green-head-ink, #16291c);
 }
 
+.vo-table__img {
+    display: block;      /* forces its own line under the text */
+    margin-top: 0.6rem;  /* gap between the sentence and the image */
+    width: 100%;
+    max-width: 18rem;    /* cap so it doesn't widen the column */
+    height: auto;
+}
+
+
 .vo-table--green tbody tr:nth-child(odd) td,
 .vo-table--green tbody tr:nth-child(odd) th[scope="row"] {
     background: var(--vo-table-green-zebra, #edf4ee);
@@ -402,6 +411,7 @@
     background: var(--vo-panel-bg, #fdf9e6);
     border-radius: var(--vo-radius-lg, 10px);
 }
+
 
 .vo-panel__title {
     margin: 0 0 var(--vo-space-4, 1.5rem);
@@ -432,6 +442,11 @@
     background: var(--vo-card-bg, #f9eec0);
     border: var(--vo-border-width, 1px) solid var(--vo-card-border, #e8d79a);
     border-radius: var(--vo-radius, 6px);
+}
+
+.vo-card--purple {
+    background: var(--vo-purple-bg, #e3e0f8);
+    border-color: var(--vo-purple-border, #b9b4e8);
 }
 
 .vo-card__title {
