@@ -43,6 +43,22 @@ ciphertext itself, not from hiding a page.
 
 4. Commit `pages/work/` and push. Never commit `work-src/`.
 
+## The pre-commit hook
+
+`tools/hooks/pre-commit` refuses a commit while any file in `work-src/` is
+newer than its `.enc`. Because `work-src/` is gitignored, forgetting step 3
+leaves the tree looking clean while the site serves the previous build — the
+hook is what turns that silence into an error.
+
+Install it in a fresh clone (git does not do this for you):
+
+```
+ln -sf ../../tools/hooks/pre-commit .git/hooks/pre-commit
+```
+
+It compares modification times, so it is a reminder rather than a proof. Bypass
+a single commit with `git commit --no-verify`.
+
 ## What this does and does not protect
 
 Without the password the content is genuinely unreadable — AES-256-GCM with

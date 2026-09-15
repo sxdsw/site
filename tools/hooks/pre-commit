@@ -1,0 +1,55 @@
+#!/bin/sh
+# Refuse to commit while pages/work/ is older than work-src/.
+#
+# work-src/ is gitignored, so editing a work page leaves the tree "clean" and
+# git reports nothing to do — the edit only reaches the repo once
+# tools/encrypt.mjs rebuilds the ciphertext. Without this check it is easy to
+# commit, push and merge with the live site still serving the previous build.
+#
+# Installed as .git/hooks/pre-commit (a symlink to this file).
+# Bypass once with: git commit --no-verify
+
+SRC=work-src
+OUT=pages/work
+
+[ -d "$SRC" ] || exit 0
+
+# mtime in epoch seconds; BSD stat first, GNU stat as fallback.
+mtime() { stat -f %m "$1" 2>/dev/null || stat -c %Y "$1" 2>/dev/null; }
+
+stale=''
+missing=''
+
+# -type f skips empty dirs; -name '.*' matches what encrypt.mjs ignores.
+for src in $(find "$SRC" -type f ! -name '.*'); do
+	enc="$OUT/${src#$SRC/}.enc"
+	if [ ! -f "$enc" ]; then
+		missing="$missing  $src\n"
+	elif [ "$(mtime "$src")" -gt "$(mtime "$enc")" ]; then
+		stale="$stale  $src\n"
+	fi
+done
+
+[ -z "$stale" ] && [ -z "$missing" ] && exit 0
+
+echo
+echo "pre-commit: the encrypted work pages are out of date."
+echo
+
+if [ -n "$stale" ]; then
+	echo "Edited since the last encrypt:"
+	printf "$stale"
+fi
+
+if [ -n "$missing" ]; then
+	echo "No ciphertext at all (new file, or not listed in ENTRIES):"
+	printf "$missing"
+fi
+
+echo
+echo "Rebuild, then commit again:"
+echo "    node tools/encrypt.mjs"
+echo
+echo "To commit anyway: git commit --no-verify"
+echo
+exit 1
