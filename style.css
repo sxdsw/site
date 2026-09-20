@@ -45,6 +45,11 @@ body {
     font-size: 22px;
 }
 
+#HeaderName a {
+    text-decoration: none;
+    color: inherit;
+}
+
 a.linkPage,
 a.linkPage:visited,
 a.linkPage:hover,
@@ -414,7 +419,7 @@ details[open] summary:after {
         width: calc(100vw - 36rem);
         height: 0;
         min-height: 0;
-        margin-top: -10.5rem;
+        margin-top: 0rem;
         overflow: hidden;
     }
 
