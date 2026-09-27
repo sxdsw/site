@@ -279,6 +279,25 @@ function setupParentFrameSizing() {
         });
     });
 
+    // Expanding "Others" loads the Work gate straight into the frame — no
+    // separate "Work" link to click first.
+    const othersDetails = document.getElementById('othersDetails');
+
+    if (othersDetails) {
+        othersDetails.addEventListener('toggle', () => {
+            if (!othersDetails.open || frame.src.endsWith('/pages/work.html')) {
+                return;
+            }
+
+            isFrameNavigating = true;
+            clearWorkEntries();
+            clearFrameMeasurements();
+            disconnectFrameObservers();
+            frame.style.height = '0px';
+            frame.src = 'pages/work.html';
+        });
+    }
+
     window.addEventListener('message', (event) => {
         if (event.source !== frame.contentWindow || isFrameNavigating) {
             return;
