@@ -192,6 +192,20 @@
             if (first) showEntry(meta.entries[0].file, first);
         });
 
+        // TEMPORARY: fill this in to skip the password prompt for every
+        // visitor. The ciphertext is unchanged — this just submits the gate
+        // form for them. Delete this block (and the password) to re-lock.
+        //
+        // Base64 only keeps the password from showing up as a readable
+        // string in view-source — anyone who opens devtools can still get
+        // it (e.g. atob() on this value, or a breakpoint on deriveKey).
+        // Compute the value by running btoa('the password') in a console.
+        const AUTO_UNLOCK_PASSWORD_B64 = 'b3BlbnNlc2FtZQ==';
+        if (AUTO_UNLOCK_PASSWORD_B64) {
+            document.getElementById('pass').value = atob(AUTO_UNLOCK_PASSWORD_B64);
+            document.getElementById('gate').requestSubmit();
+        }
+
         // The sidebar links ask for an entry; the key stays in this frame.
         addEventListener('message', (ev) => {
             if (ev.source !== parent || !key) return;
