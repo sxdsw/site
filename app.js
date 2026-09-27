@@ -304,6 +304,57 @@ function setupParentFrameSizing() {
     scheduleFrameMeasurements();
 }
 
+function initVoCarousels() {
+    document.querySelectorAll('.vo-carousel').forEach((carousel) => {
+        const track = carousel.querySelector('.vo-carousel__track');
+        const prevBtn = carousel.querySelector('.vo-carousel__btn--prev');
+        const nextBtn = carousel.querySelector('.vo-carousel__btn--next');
+        const dotsContainer = carousel.querySelector('.vo-carousel__dots');
+
+        if (!track || track.children.length === 0) {
+            return;
+        }
+
+        const slideCount = track.children.length;
+        let dots = [];
+
+        if (dotsContainer) {
+            dots = Array.from({ length: slideCount }, (_, index) => {
+                const dot = document.createElement('button');
+                dot.type = 'button';
+                dot.className = 'vo-carousel__dot';
+                dot.setAttribute('aria-label', `Go to image ${index + 1}`);
+                dot.addEventListener('click', () => {
+                    track.scrollTo({ left: track.clientWidth * index, behavior: 'smooth' });
+                });
+                dotsContainer.append(dot);
+                return dot;
+            });
+        }
+
+        const updateDots = () => {
+            const index = Math.round(track.scrollLeft / track.clientWidth);
+            dots.forEach((dot, dotIndex) => {
+                dot.setAttribute('aria-current', String(dotIndex === index));
+            });
+        };
+
+        const goToRelativeSlide = (direction) => {
+            const index = Math.round(track.scrollLeft / track.clientWidth);
+            const nextIndex = Math.max(0, Math.min(slideCount - 1, index + direction));
+            track.scrollTo({ left: track.clientWidth * nextIndex, behavior: 'smooth' });
+        };
+
+        prevBtn?.addEventListener('click', () => goToRelativeSlide(-1));
+        nextBtn?.addEventListener('click', () => goToRelativeSlide(1));
+        track.addEventListener('scroll', () => window.requestAnimationFrame(updateDots));
+
+        updateDots();
+    });
+}
+
+initVoCarousels();
+
 if (window.parent !== window) {
     setupChildFrameSizing();
 } else {

@@ -18,7 +18,8 @@ const ITERATIONS = 250_000;
 // Pages offered in the gate's index, in order.
 const ENTRIES = [
   { file: 'nala.html', title: 'NALA' },
-  { file: 'roleplay.html', title: 'AI Role-Play' },
+  { file: 'roleplay.html', title: 'AI Role-Play - UI/UX' },
+  { file: 'roleplayenv.html', title: 'AI Role-Play - Immersive Environment' },
 ];
 
 async function walk(dir) {

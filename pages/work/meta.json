@@ -4,9 +4,9 @@
     "name": "PBKDF2",
     "hash": "SHA-256",
     "iterations": 250000,
-    "salt": "jjolJqVIi2bLravXxhH8bw=="
+    "salt": "WKgFyox6LHtTndoFVyRhlA=="
   },
-  "check": "/jS00erXuK6Pa1ZS2rUWv0PP8TZMV/2P2jn/ubFc1ZtKGTlA",
+  "check": "DcA+RB6oKR0m2NnLygIq8i6h8puIqB7KIVTu6wPZ3kO3YNjE",
   "entries": [
     {
       "file": "nala.html",
@@ -14,7 +14,11 @@
     },
     {
       "file": "roleplay.html",
-      "title": "AI Role-Play"
+      "title": "AI Role-Play - UI/UX"
+    },
+    {
+      "file": "roleplayenv.html",
+      "title": "AI Role-Play - Immersive Environment"
     }
   ]
 }
