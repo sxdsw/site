@@ -80,6 +80,7 @@
                 const plain = await open(await fetchSealed(`work/${keyPath}.enc`));
                 const url = URL.createObjectURL(new Blob([plain]));
                 blobUrls.push(url);
+                img.addEventListener('load', () => window.notifyFrameResize?.(), { once: true });
                 img.src = url;
             } catch (err) {
                 img.alt = `could not decrypt ${keyPath}`;
@@ -116,6 +117,7 @@
                 el.rel = 'stylesheet';
                 el.href = href;
                 el.dataset.entryCss = '';
+                el.addEventListener('load', () => window.notifyFrameResize?.());
                 document.head.append(el);
             }
 
@@ -134,6 +136,7 @@
             const content = document.getElementById('workContent');
             content.replaceChildren(...parsed.body.childNodes);
             for (const img of content.querySelectorAll('img[data-enc-src]')) lazy.observe(img);
+            window.notifyFrameResize?.();
         }
 
         document.getElementById('gate').addEventListener('submit', async (ev) => {

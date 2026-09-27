@@ -42,6 +42,11 @@ function setupChildFrameSizing() {
         });
     };
 
+    // pages/work.html swaps its decrypted content into this same document
+    // (no nested iframe), so it calls this directly after each content/image
+    // change instead of waiting on the observers below to notice.
+    window.notifyFrameResize = notifyParent;
+
     window.addEventListener('load', notifyParent);
     window.addEventListener('resize', notifyParent);
     window.addEventListener('pageshow', notifyParent);
