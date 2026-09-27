@@ -12,13 +12,18 @@ function measureDocumentHeight(doc) {
     const body = doc.body;
     const root = doc.documentElement;
 
+    // root.clientHeight and root.scrollHeight are deliberately excluded:
+    // per spec, both are defined for the root element as max(content size,
+    // viewport height) — and inside an iframe, that viewport IS the
+    // iframe's own current rendered size. Including either makes the
+    // measurement a floor that can grow but never shrink back down once
+    // content changes to something shorter. body's own metrics and the
+    // root's offsetHeight (a plain CSS box height, not viewport-special-
+    // cased) aren't affected, so they're enough on their own.
     return Math.max(
         body ? body.scrollHeight : 0,
         body ? body.offsetHeight : 0,
-        body ? body.clientHeight : 0,
-        root ? root.scrollHeight : 0,
-        root ? root.offsetHeight : 0,
-        root ? root.clientHeight : 0
+        root ? root.offsetHeight : 0
     );
 }
 
@@ -101,12 +106,14 @@ function setupParentFrameSizing() {
     }
 
     let isFrameNavigating = false;
+    let hasAppliedHeight = false;
 
     const applyFrameHeight = (height) => {
         if (!Number.isFinite(height) || height <= 0) {
             return;
         }
 
+        hasAppliedHeight = true;
         frame.style.height = `${Math.ceil(height)}px`;
     };
 
@@ -118,7 +125,15 @@ function setupParentFrameSizing() {
         try {
             applyFrameHeight(measureDocumentHeight(frame.contentDocument));
         } catch (error) {
-            frame.style.height = '80vh';
+            // A direct cross-frame read can fail while the work gate is
+            // swapping content in and out; the child's own postMessage
+            // (notifyFrameResize in setupChildFrameSizing) already reaches
+            // applyFrameHeight in that case, so only guess a fallback height
+            // here if nothing has set a real one yet — otherwise this would
+            // keep clobbering a correct height with a fixed 80vh.
+            if (!hasAppliedHeight) {
+                frame.style.height = '80vh';
+            }
         }
     };
 
@@ -216,6 +231,7 @@ function setupParentFrameSizing() {
 
     frame.addEventListener('load', () => {
         isFrameNavigating = false;
+        hasAppliedHeight = false;
         observeFrameDocument();
         scheduleFrameMeasurements();
         startFramePolling();
