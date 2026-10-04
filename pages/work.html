@@ -136,10 +136,12 @@
             const content = document.getElementById('workContent');
             content.replaceChildren(...parsed.body.childNodes);
             for (const img of content.querySelectorAll('img[data-enc-src]')) lazy.observe(img);
-            // initVoCarousels() only ran once, at initial page load, before any
-            // entry's content existed — re-run it now that this entry's markup
-            // (e.g. roleplayenv's avatar carousel) is actually in the DOM.
+            // initVoCarousels()/initVoDetailToggles() only ran once, at initial
+            // page load, before any entry's content existed — re-run them now
+            // that this entry's markup (e.g. roleplayenv's avatar carousel or
+            // a summary/technical toggle) is actually in the DOM.
             window.initVoCarousels?.();
+            window.initVoDetailToggles?.();
             window.notifyFrameResize?.();
         }
 

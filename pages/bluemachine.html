@@ -20,14 +20,65 @@
             <p>Blue is a colour that leaves me with an empty feeling that stirs in me. How may I articulate this feeling?  If I can retrieve a meaning rooted in the history of recorded blues, there has to be some truth to be sought after among all lived truths. Thus, I searched for what every written record of blue had meant. </p>
         </div>
         <div id="statement">
-            <p><i>Blue Machine</i> is an attempt to reconcile the capabilities of the machine with the failure of my human experience to articulate my encounters with blue. Through the interactions between my machine and environment, perhaps something may emerge and my blues make take on a more definable shape.  </p>
+            <p><i>Blue Machine</i> is an attempt to reconcile the capabilities of the machine with the failure of my human experience to articulate my encounters with blue. Through the interactions between my machine and environment, perhaps something may emerge and my blues may take on a more definable shape.  </p>
         </div>
 
         <div id="statement">
-            <p>Perhaps, with the assistance of computational methods I may be able to locate something among the words that had lived and seen through blues of centuries. Where my mind and heart cannot articulate blue, Computation then offers something governed by rules, that may guide me towards something more definable.</a>.</p>
+            <p>Perhaps, with the assistance of computational methods I may be able to locate something among the words that had lived and seen through blues of centuries. Where my mind and heart cannot articulate blue, Computation then offers something governed by rules, that may guide me towards something more definable.</p>
         </div>
         <div id="statement">
             <p><i>Blue Machine</i> speculates a co-existence with machines, for the possibility that machines can complement where the human faculties fail. This is my attempt to hold what I cannot articulate in the company of a machine, by relying on machines to help me make meaning of the colour of infinite feeling and meaning.</p>
+        </div>
+        <div id="statement">
+            <details>
+                <summary class="reveal">Technical Detail</summary>
+
+                <h4>What is it?</h4>
+                <p>Blue Machine is a computational poetic project. It is a navigational system that attempts to locate found definitions of the color blue, based on a curated corpus of blue from Project Gutenburg.</p>
+                <p>It attempts to assemble found meaning of blue from language of lived experiences. The technical implementation follows this artistic decision closely, by refusal of implementing a generative model to create or define the color blue. The output is assembled entirely from a curated text corpus. LLMs are not deployed for the output.</p>
+
+                <h4>Result</h4>
+                <p>The output is defined as: Blue is { fragment 1 }, { fragment 2 }.</p>
+                <p>This is how the system retrieves a definition from the curated corpus:</p>
+
+                <h4>Simply</h4>
+                <ol>
+                    <li>A reading of blue — hue, saturation, lightness, and how much of the frame it fills — becomes a search vector.</li>
+                    <li>That vector retrieves one sentence from a curated corpus of 59,433 blue-related sentences.</li>
+                    <li>The most descriptive noun in that sentence is pulled out.</li>
+                    <li>That noun is used to run a second search — this one unrestricted, ranging across the whole corpus rather than just the blue-related portion.</li>
+                    <li>A fragment is drawn from what that search finds, then paired with a second fragment taken from a nearby sentence — together, one attempted definition of blue.</li>
+                </ol>
+
+                <h4>Detailed</h4>
+                <ol>
+                    <li>The colour reading (hue, saturation, lightness, coverage) is mapped to a 100-dimensional direction in a fastText embedding space trained on the project's own corpus.</li>
+                    <li>The vector queries a nearest-neighbour index built over the corpus. Results are filtered to a word-count band and restricted to a precomputed eligible subset of blue related vocabulary. A candidate is selected at random from what survives (if nothing survives the eligibility filter, it's dropped and the word-count-filtered pool is used instead).</li>
+                    <li>The retrieved sentence is parsed for dependency structure. The highest-scoring noun becomes the pivot.</li>
+                    <li>The pivot noun's embedding vector is blended with its nearest neighbours in the embedding space. This blended vector queries the same nearest-neighbour index against the <i>entire</i> corpus, with no eligibility restriction.</li>
+                    <li>A fragment is extracted by walking outward from a noun phrase through its dependency subtree.</li>
+                    <li>The accepted fragment's own nearest neighbours are retrieved for the second fragment.</li>
+                    <li>The two fragments are combined into a single line of output. No text is generated or rewritten anywhere in this process; the only transformations applied are surface trimming in relation case, punctuation, whitespace for presentation.</li>
+                </ol>
+
+                <h4>Tech Stack</h4>
+                <ol>
+                    <li>Trained FastText model for word embeddings</li>
+                    <li>Annoy index for vector-based searches</li>
+                    <li>Python 3</li>
+                    <li>Raspberry Pi 4 Module</li>
+                </ol>
+
+                <h4>System Design Constraints</h4>
+                <p>The system must never write or author a definition. This ruled out generative models such as GPT or BART.</p>
+
+                <h4>Design Decisions</h4>
+                <ol>
+                    <li>Retrieval 1 is restricted to blue-relevant sentences, while retrieval 2 searches the whole corpus. This was designed in relation to the concept statement, where the corpus contains only. The idea of the retrieval is translated to the syntax, where fragment 1 is related to Blue, and fragment 2 is related to fragment 1.</li>
+                    <li>Curation of the corpus is based on personal judgement. This decision was exercised as a creative decision, where broken fragments were often bypassed by written scripts to scrap these "bugs." Ultimately, as the author of the system, I decided that I would impose my own judgement and feeling on blue semantic literature that moves me.</li>
+                    <li>Blue is an "engine" that traverses the system.</li>
+                </ol>
+            </details>
         </div>
     </section>
     <br>

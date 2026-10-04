@@ -393,7 +393,26 @@ function initVoCarousels() {
     });
 }
 
+function initVoDetailToggles() {
+    document.querySelectorAll('.vo-detail-toggle').forEach((button) => {
+        const scope = button.closest('.vo-container') || document;
+
+        button.addEventListener('click', () => {
+            const isOn = button.getAttribute('aria-pressed') === 'true';
+
+            scope.querySelectorAll('.vo-detail').forEach((el) => {
+                el.hidden = isOn;
+            });
+
+            button.setAttribute('aria-pressed', String(!isOn));
+            button.textContent = isOn ? 'Show technical detail' : 'Show summary';
+            window.notifyFrameResize?.();
+        });
+    });
+}
+
 initVoCarousels();
+initVoDetailToggles();
 
 if (window.parent !== window) {
     setupChildFrameSizing();

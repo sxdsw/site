@@ -58,6 +58,28 @@ a.linkPage:active {
     color: inherit;
 }
 
+/* Reveals the deeper-technical layer on a case study/piece (see
+   initVoDetailToggles() in app.js); styled like a sidebar nav link
+   rather than a button chip. */
+button.vo-detail-toggle {
+    display: inline-block;
+    margin: 0 0 1.5rem;
+    padding: 0;
+    border: 0 none;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+button.vo-detail-toggle:hover,
+button.vo-detail-toggle[aria-pressed="true"] {
+    text-decoration: underline;
+}
+
 details {
     display: block !important;
     width: 100%;
@@ -74,6 +96,25 @@ summary {
 /* suppress webkit default blue underline/highlight on summary */
 summary::-webkit-details-marker {
     display: none;
+}
+
+/* A summary whose disclosure triangle sits on the left instead of the
+   site's usual right-side one (see summary:after below) — drawn by hand
+   on the other side, with the shared right-side one turned off so there
+   is only ever one triangle. */
+summary.reveal::before {
+    content: '\25B8';
+    display: inline-block;
+    margin-right: 0.4em;
+    transition: transform 0.15s ease;
+}
+
+details[open] > summary.reveal::before {
+    transform: rotate(90deg);
+}
+
+summary.reveal:after {
+    content: none;
 }
 
 summary:focus {
